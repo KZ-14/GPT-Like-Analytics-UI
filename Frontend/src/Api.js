@@ -360,6 +360,52 @@ export async function update_title(sessionId,title){
         console.error("Error Updating Title", error);
     }
 }
+
+
+export async function query_ai(text,session_id){
+    const response= await fetch("https://maricogpt.maricoapps.biz/backend/query_AI/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        }, 
+        body: JSON.stringify({
+            input : text,
+            session_id : session_id,
+            Title : "Test"
+        })
+      });
+    const result = await response.json();
+    if(result.text) {
+        console.log(result);
+    }
+    if(result.user_input_required){
+        console.log(result);
+    }
+    console.log(result);
+    return result
+}
+
+export async function query_ai_with_filters(filters,session_id){
+    const response= await fetch("https://maricogpt.maricoapps.biz/backend/query_AI_with_filters/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        }, 
+        body: JSON.stringify({
+            session_id : session_id,
+            filters : filters
+        })
+      });
+    const result = await response.json();
+    if(result.text) {
+        console.log(result);
+    }
+    if(result.user_input_required){
+        console.log(result);
+    }
+    console.log(result);
+    return result
+}
 // export async function BOT(message, sessionId) {
 //     try {
 //         const response = await fetch("https://maricogpt.maricoapps.biz/backend/bot", {
