@@ -30,7 +30,7 @@ class JsonFormatter(logging.Formatter):
 
 # Configure the Loki handler
 handler = logging_loki.LokiHandler(
-    url="https://maricogpt.maricoapps.biz/loki/api/v1/push",
+    url="https://ai.maricoapps.biz/loki/api/v1/push",
     version="1",
 )
 

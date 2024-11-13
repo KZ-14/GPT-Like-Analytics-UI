@@ -390,10 +390,6 @@ async def Chatbot_RAG(input,session_id,title,retriever) -> AsyncIterator[str]:
             # print("Chunk Recieved",chunk)
             try:
                 if chunk['answer']:
-                    # try:
-                    #     print("Ye dekh Chunk document ID",chunk)
-                    # except:
-                    #     print('Kuch nhi mila Bhai')
                     yield chunk['answer']
                     answered = True
                     out.append(chunk['answer'])

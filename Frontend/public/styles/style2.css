@@ -275,7 +275,9 @@
     position: relative;
     flex-shrink: 0;
     margin-left: 6.5rem; /* Add left margin to account for the new sidebar position */
-    box-shadow: 3px 2px 2px rgb(236, 232, 232);
+    /* box-shadow: 3px 2px 2px rgb(236, 232, 232); */
+    box-shadow: 1px 1px 5px rgb(113, 112, 112); 
+
   }
   
   .sideBar.collapsed {
@@ -404,9 +406,10 @@
     gap: 8px;
     font-size: 12 px;
     color: #373737;
-    /* font-family: sans-serif; */
+    font-family: sans-serif;
     font-size: 2em; /* Adjust the size as needed */
     font-weight: bold; 
+    padding-left: 5px;
     /* text-shadow: 2px 2px 0 #777; */
     /* text-shadow: 1px 1px 0 #626262, 2px 2px 0 #777; */
   }
@@ -509,7 +512,7 @@
     width: 100rem;
     max-width: 100rem;;
     height: calc(100vh - 17rem);
-    overflow-x: clip;
+    overflow-x: hidden;
   }
   
   .chats::-webkit-scrollbar {
@@ -746,14 +749,15 @@
   
   .bot {
     /* background: rgb(241, 252, 244); */
-    width: fit-content;
-    border-radius: 0.5rem;
+    width: 100%;
+    /* border-radius: 0.5rem; */
     margin: 2rem;
     padding: 2rem 3rem;
     font-size: 1.3rem;
     display: flex;
     align-items: flex-start;
     text-align: left;
+    overflow-x: hidden;
   }
   
   .send {
@@ -1145,10 +1149,10 @@
 /* CSS for the table */
 .styledTable {
   border-collapse: collapse;
-  width: 100%; /* Adjust width as needed */
+  width: 90rem; /* Adjust width as needed */
   margin-top: 20px;
-  overflow: scroll;
-  overflow-x: scroll;
+  /* overflow: scroll; */
+  overflow-x: auto;
 }
 
 /* Styling the table headers */
@@ -1196,8 +1200,8 @@
   /* border-right-style: solid;
   border-right-width:2px;
   border-right-color:rgb(186, 184, 184); */
-  box-shadow: 3px 2px 2px rgb(220, 211, 211);
-
+  /* box-shadow: 3px 2px 2px rgb(220, 211, 211); */
+  box-shadow: 1px 1px 1cap rgb(113, 112, 112); 
   
 }
 
@@ -1575,4 +1579,63 @@
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.4s ease-in, transform 0.4s ease-in;
+}
+
+
+/*  */
+.data-frame-container {
+  font-family: Arial, sans-serif;
+  margin-top: 10px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table-wrapper {
+  overflow-x: scroll;
+  max-height: 300px; /* Limits table height to 300px with vertical scrolling */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 16px; /* Adds space between the table and buttons */
+}
+
+.data-table {
+  min-width: 600px;
+  width: max-content;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  white-space: nowrap; /* Prevents text wrapping and allows horizontal scroll */
+}
+
+.data-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.download-button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.download-button:hover {
+  background-color: #0056b3;
 }
