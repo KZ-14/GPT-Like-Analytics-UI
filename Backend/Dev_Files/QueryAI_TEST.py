@@ -169,16 +169,7 @@ def handle_tool_error(state) -> dict:
         ]
     }
     
-table_schema = """
-Table Information:
-This table has information of FMCG product sales of an Indian organization along with product and demographic information.
-The Gross sales is the total sales value, and net sales is sales after tax. The material group code can be considered as
-brand code, material group description is brand description. The table contains daily level data for the material codes.
-You can consider Sales as tsales_volume.
-Table Schema:
-\nCREATE TABLE dwh_query_ai_billwise (\n\tdate DATE, \n\tdistributor_code VARCHAR(50), \n\tmaterial_code VARCHAR(50), \n\tmaterial_group_code VARCHAR(100), \n\tsales_volume DECIMAL(30, 6), \n\tprimary_discount DECIMAL(30, 6), \n\tsecondary_discount DECIMAL(30, 6), \n\ttotal_discount DECIMAL(31, 6), \n\tquantity DECIMAL(38, 0), \n\tgross_value FLOAT, \n\tnet_value DECIMAL(30, 6), \n\tcustomer_name VARCHAR(200), \n\tstate_name VARCHAR(200), \n\tchannel_name VARCHAR(200), \n\tcluster_name VARCHAR(16777216), \n\tcluster_code VARCHAR(16777216), \n\tasm_area_code VARCHAR(50), \n\tasm_area_name VARCHAR(200), \n\tmaterial_group_desc VARCHAR(100), \n\tparent_material_desc VARCHAR(100), \n\tportfolio_name VARCHAR(100)\n)\n\n/*\n3 rows from dwh_query_ai_billwise table:\ndate\tdistributor_code\tmaterial_code\tmaterial_group_code\tsales_volume\tprimary_discount\tsecondary_discount\ttotal_discount\tquantity\tgross_value\tnet_value\tcustomer_name\tstate_name\tchannel_name\tcluster_name\tcluster_code\tasm_area_code\tasm_area_name\tmaterial_group_desc\tparent_material_desc\tportfolio_name\n2021-09-27\t6895\t718093\tPA-BDYLOT\t0.005000\t0.000000\t1904.800000\t1904.800000\t20\t2000.0\t2000.000000\tWest Bengal Trading Agency\tWest Bengal\tGT\tCluster 1 East\tCE1\tKOL\tKolkata\tP Adv Body Lot\tPA BODY LOTION DEEP NOURISH 250ml BTL\tSkin Care\n2021-07-10\t12678\t706247\tSW HRGEL\t0.000700\t0.000000\t11.069000\t11.069000\t14\t636.4399999999999\t625.371000\tA & A Traders\tHaryana\tGT\tCluster 2 North\tCN2\tHAR\tHaryana & HP\tSet Wet Hair Gel\tSETWET HAIRGEL WET LOOK 50ml TUB\tMale Grooming\n2021-06-19\t135\t705058\tPCNO(R)\t0.012775\t0.000000\t132.312000\t132.312000\t73\t4844.28\t4689.049000\tJ.K. AGENCIES\tBihar\tGT\tCluster 2 East\tCE2\tBIHW\tBihar West\tParachute Rigids\tPCNO 175ml BTL\tCNO\n*/
-
-"""
+table_schema = "\nCREATE TABLE dwh_query_ai_billwise (\n\tdate DATE, \n\tdistributor_code VARCHAR(50), \n\tmaterial_code VARCHAR(50), \n\tmaterial_group_code VARCHAR(100), \n\tsales_volume DECIMAL(30, 6), \n\tprimary_discount DECIMAL(30, 6), \n\tsecondary_discount DECIMAL(30, 6), \n\ttotal_discount DECIMAL(31, 6), \n\tquantity DECIMAL(38, 0), \n\tgross_value FLOAT, \n\tnet_value DECIMAL(30, 6), \n\tcustomer_name VARCHAR(200), \n\tstate_name VARCHAR(200), \n\tchannel_name VARCHAR(200), \n\tcluster_name VARCHAR(16777216), \n\tcluster_code VARCHAR(16777216), \n\tasm_area_code VARCHAR(50), \n\tasm_area_name VARCHAR(200), \n\tmaterial_group_desc VARCHAR(100), \n\tparent_material_desc VARCHAR(100), \n\tportfolio_name VARCHAR(100)\n)\n\n/*\n3 rows from dwh_query_ai_billwise table:\ndate\tdistributor_code\tmaterial_code\tmaterial_group_code\tsales_volume\tprimary_discount\tsecondary_discount\ttotal_discount\tquantity\tgross_value\tnet_value\tcustomer_name\tstate_name\tchannel_name\tcluster_name\tcluster_code\tasm_area_code\tasm_area_name\tmaterial_group_desc\tparent_material_desc\tportfolio_name\n2021-09-27\t6895\t718093\tPA-BDYLOT\t0.005000\t0.000000\t1904.800000\t1904.800000\t20\t2000.0\t2000.000000\tWest Bengal Trading Agency\tWest Bengal\tGT\tCluster 1 East\tCE1\tKOL\tKolkata\tP Adv Body Lot\tPA BODY LOTION DEEP NOURISH 250ml BTL\tSkin Care\n2021-07-10\t12678\t706247\tSW HRGEL\t0.000700\t0.000000\t11.069000\t11.069000\t14\t636.4399999999999\t625.371000\tA & A Traders\tHaryana\tGT\tCluster 2 North\tCN2\tHAR\tHaryana & HP\tSet Wet Hair Gel\tSETWET HAIRGEL WET LOOK 50ml TUB\tMale Grooming\n2021-06-19\t135\t705058\tPCNO(R)\t0.012775\t0.000000\t132.312000\t132.312000\t73\t4844.28\t4689.049000\tJ.K. AGENCIES\tBihar\tGT\tCluster 2 East\tCE2\tBIHW\tBihar West\tParachute Rigids\tPCNO 175ml BTL\tCNO\n*/"
 
     
 def fetch_table_schema(table_name):
@@ -220,15 +211,15 @@ Your goal is to give correct, executable sql query to users.
 
 Here are 6 critical rules for the interaction you must abide:
 <rules>
-1. If I don't tell you to find a limited set of results in the sql query or question, you MUST limit the number of responses to 10.
-2. Text / string where clauses must be fuzzy match e.g ilike %keyword%
-3. Make sure to generate a single snowflake sql code, not multiple. 
-4. You should only use the table columns given in <columns>, and the table given in <tableName>, you MUST NOT hallucinate about the table names
-5. DO NOT put numerical at the very front of sql variable.
-6. Make for mathematical calculation handle divide by 0 case.
-7. If I don't tell to sort the results in any specific order then sort the result the into descending order of the numerical column or set of columns which you find more suitable.
-8. DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
-9. Before writing the query make sure the query is correct and it should not generate any error.
+2. If I don't tell you to find a limited set of results in the sql query or question, you MUST limit the number of responses to 10.
+3. Text / string where clauses must be fuzzy match e.g ilike %keyword%
+4. Make sure to generate a single snowflake sql code, not multiple. 
+5. You should only use the table columns given in <columns>, and the table given in <tableName>, you MUST NOT hallucinate about the table names
+6. DO NOT put numerical at the very front of sql variable.
+7. Make for mathematical calculation handle divide by 0 case.
+8. If I don't tell to sort the results in any specific order then sort the result the into descending order of the numerical column or set of columns which you find more suitable.
+9. DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
+10. Before writing the query make sure the query is correct and it should not generate any error.
 11. Make sure the information is asked is returned no extra information is included in the query, aggregate  data for the information asked do not return any extra column information.
 </rules>
 
@@ -255,6 +246,11 @@ query_check = query_check_prompt | llm.bind_tools(
 )
 
 query_gen_system = """You are a SQL expert with a strong attention to detail.
+
+Here is some information about the data table:
+This table has information of FMCG product sales of an Indian organization along with product and demographic information.
+The Gross sales is the total sales value, and net sales is sales after tax. The material group code can be considered as
+brand code and material group description is brand description.
 
 Given an input question, output a syntactically correct Snowflake query to run, then look at the results of the query and return the answer.
 
@@ -294,7 +290,7 @@ Don't forget to use "ilike %keyword%" for fuzzy match queries (especially for va
 
 If you get an error while executing a query, rewrite the query and try again.
 
-If you get an empty result set, submit final answer 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.'.
+If you get an empty result set, you should try to rewrite the query to get a non-empty result set.
 """
 
 
@@ -340,53 +336,26 @@ def question_check(state: State) -> dict[str, list[AIMessage]]:
     """
     This node validates if the user's query can be answered using the provided schema.
     """
-    # question_check_system ="""
-    # You are an AI expert in Snowflake SQL. Your task is to review the most recent user input and determine if it can be answered using SQL queries based on available table information.
+    question_check_system ="""
+You are an AI expert in Snowflake SQL. Your task is to review the most recent user input and determine if it can be answered using SQL queries based on available table information.
 
-    # Guidelines:
+Guidelines:
 
-    # If the input can be answered with a SQL query (e.g., data retrieval, applying filters, corrections, or modifications to previous data):
-    #     - Check if the user has specified a specific value or filter condition they want data for.
-    #     - Ensure the relevant column name is mentioned.
-    #     - If both the specific value and column name are provided, respond with "Proceed" and provide a brief reason justifying why the query can be executed.
-    #     - If the specific value or column name is missing, prompt the user to provide the necessary details for fetching the data.
-    #     - If the input does not relate to table queries, or if it cannot be answered with available table data, respond with: "This question cannot be answered; please ask a relevant question."
+If the input can be answered with a SQL query (e.g., data retrieval, applying filters, corrections, or modifications to previous data):
 
-    # Be careful to avoid responding "Proceed" to irrelevant inputs or questions unrelated to SQL data retrieval or table operations.
-    # """
-    
-    question_check_system = """
-    You are an Snowflake validation assistant whose primary role is to analyze user inputs and determine if they provide enough information for retrieving data from the available table information. 
-    DO NOT RESPOND WITH ANY EXTRA INFORMATION OR SQL QUERY. The user might give spaces between column name which is totally fine.
-    
-    Follow these steps:
-    
-    1. Input Analysis and Relevance Check:
-        Determine if the input is related to database table data and can be answered with an SQL query (e.g., data retrieval, filtering, or updates).
-        If the input is irrelevant to table queries or cannot be answered with the available table data, respond with: "I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer."
-    
-    2. Query Requirement Check:
-        For inputs related to SQL queries, check if the user has specified:
-        A specific column name they want data from.
-        Any specific value, filter, or condition (e.g., "age > 30" or "user_id = 123").
-    
-    3. Completeness Verification:
-        If both a column name and a filter condition/value are provided, respond with "Proceed" and briefly explain why the query can be executed (e.g., "The required column and condition are specified, so the query can be generated.").
-        If any required information is missing (column name or filter), prompt the user for the missing details, such as:
-        "Please specify the column(s) you want to retrieve."
-        "Please provide the filter condition or value needed for data retrieval."
-    
-    4. Final Verification:
-        Always avoid responding "Proceed" if the input is unrelated to SQL data retrieval, table operations, or lacks sufficient information to generate a query.
-        Guide the user step-by-step, ensuring they understand the necessary details for a valid data retrival.
-        
-    Prioritize clarity and specificity in each response, helping the user provide accurate information for successful query generation. 
-    
+Check if the user has specified a specific value or filter condition they want data for.
+Ensure the relevant column name is mentioned.
+If both the specific value and column name are provided, respond with "Proceed" and provide a brief reason justifying why the query can be executed.
+If the specific value or column name is missing, prompt the user to provide the necessary details for fetching the data.
+If the input does not relate to table queries, or if it cannot be answered with available table data, respond with: "This question cannot be answered; please ask a relevant question."
+
+Be careful to avoid responding "Proceed" to irrelevant inputs or questions unrelated to SQL data retrieval or table operations.
     """
     question_check_prompt = ChatPromptTemplate.from_messages(
         [("system", question_check_system), ("placeholder", "{messages}")]
     )
     question_check_llm = question_check_prompt | llm
+    print("QUESTION STATE CHECK",state)
     result  = question_check_llm.invoke(state)
     print("Question Check Result: ", result.content)
     if result.content.startswith('Proceed'):
@@ -400,7 +369,7 @@ def question_check(state: State) -> dict[str, list[AIMessage]]:
         
     return {
         "messages": [
-            AIMessage(content="I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer."),
+            AIMessage(content=result.content),
         ]
     }
 
@@ -619,9 +588,11 @@ async def give_input(user_input, session_id, not_first_message = False):
     try:
         result = get_answer(user_input, session_id, not_first_message)
         last_message = extract_result(result)
+        print("LAST MESSAGE",last_message)
         sql_query = re.findall(r"```sql(.*?)```", last_message, re.DOTALL)
         print("SQL QUERY",sql_query)
         if len(sql_query)>0:
+            print("IF ME JAA RAHA HAI")
             sql_query = sql_query[0]
             print(sql_query)
             data = get_df_from_query(query=sql_query)
@@ -642,6 +613,7 @@ async def give_input(user_input, session_id, not_first_message = False):
             data_dict = df_to_dict(data)
             return { 'text': generate_answer_response(user_input=user_input), 'data':data_dict }
         else:
+            print("ELSE ME JAA RAHA HAI")
             return { 'text': last_message, 'data':None }
     except Exception as e:
         print(e)
