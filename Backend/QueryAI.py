@@ -1,3 +1,5 @@
+import os
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.sql_database import SQLDatabase
 from langgraph.checkpoint.memory import MemorySaver
@@ -25,13 +27,14 @@ from typing_extensions import TypedDict
 
 from langgraph.graph import END, StateGraph, START
 from langgraph.graph.message import AnyMessage, add_messages
+from langgraph.errors import GraphRecursionError
 from dotenv import load_dotenv
-import re, json
+import re
 from cosmos_db import CosmosDBSaver
 from azure.cosmos import CosmosClient, exceptions
 
 load_dotenv()
-import os
+
 
 def check_partition_key(partition_key_value):
     
@@ -40,7 +43,7 @@ def check_partition_key(partition_key_value):
     container = database.get_container_client(os.environ["COSMOS_DB_CONTAINER"])
 
     # Query to check for the existence of the partition key
-    query = f"SELECT * FROM c WHERE c.key = @partition_key"
+    query = "SELECT * FROM c WHERE c.key = @partition_key"
     parameters = [{"name": "@partition_key", "value": partition_key_value}]
 
     try:
@@ -264,6 +267,13 @@ Only  wrap the generated sql code with ``` sql code markdown in this format e.g:
 (select 1) union (select 2)
 ``` 
 
+Also wrap one line summary for the answer as ```summary markdown in final answer e.g.
+```summary
+answer summary
+```
+Summary should not include any answer.
+
+
 When generating the query:
 
 Output the SQL query that answers the input question without a tool call and the Answer must start with 'final_answer' followed by the sql query.
@@ -294,11 +304,10 @@ Don't forget to use "ilike %keyword%" for fuzzy match queries (especially for va
 
 If you get an error while executing a query, rewrite the query and try again.
 
-If you get an empty result set, submit final answer 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.'.
+If you get an empty result set, you should try to rewrite the query to get a non-empty result set and after 5 iterations you still get the empty set submit final answer 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.'.
+Also must limit the answer for top 10 rows.
 """
 
-
-# while submitting final answer.
 
 # Define the state for the agent
 class State(TypedDict):
@@ -340,49 +349,50 @@ def question_check(state: State) -> dict[str, list[AIMessage]]:
     """
     This node validates if the user's query can be answered using the provided schema.
     """
-    # question_check_system ="""
-    # You are an AI expert in Snowflake SQL. Your task is to review the most recent user input and determine if it can be answered using SQL queries based on available table information.
+    question_check_system ="""
+    You are an AI expert in Snowflake SQL. Your task is to review the most recent user input and determine if it can be answered using SQL queries based on available table information.
+    DO NOT RESPOND WITH ANY EXTRA INFORMATION OR SQL QUERY.
+    
+    Guidelines:
 
-    # Guidelines:
+    If the input can be answered with a SQL query (e.g., data retrieval, applying filters, corrections, or modifications to previous data):
+        - Check if the user has specified a specific value or filter condition they want data for.
+        - Ensure the relevant column name is mentioned.
+        - If both the specific value and column name are provided, respond with "Proceed" and provide a brief reason justifying why the query can be executed.
+        - If the specific value or column name is missing, prompt the user to provide the necessary details for fetching the data.
+        - If the input does not relate to table queries, or if it cannot be answered with available table data, respond with: "I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer."
 
-    # If the input can be answered with a SQL query (e.g., data retrieval, applying filters, corrections, or modifications to previous data):
-    #     - Check if the user has specified a specific value or filter condition they want data for.
-    #     - Ensure the relevant column name is mentioned.
-    #     - If both the specific value and column name are provided, respond with "Proceed" and provide a brief reason justifying why the query can be executed.
-    #     - If the specific value or column name is missing, prompt the user to provide the necessary details for fetching the data.
-    #     - If the input does not relate to table queries, or if it cannot be answered with available table data, respond with: "This question cannot be answered; please ask a relevant question."
-
-    # Be careful to avoid responding "Proceed" to irrelevant inputs or questions unrelated to SQL data retrieval or table operations.
+    Be careful to avoid responding "Proceed" to irrelevant inputs or questions unrelated to SQL data retrieval or table operations.
     # """
     
-    question_check_system = """
-    You are an Snowflake validation assistant whose primary role is to analyze user inputs and determine if they provide enough information for retrieving data from the available table information. 
-    DO NOT RESPOND WITH ANY EXTRA INFORMATION OR SQL QUERY. The user might give spaces between column name which is totally fine.
+    # question_check_system = """
+    # You are an Snowflake validation assistant whose primary role is to analyze user inputs and determine if they provide enough information for retrieving data from the available table information. 
+    # DO NOT RESPOND WITH ANY EXTRA INFORMATION OR SQL QUERY. The user might give spaces between column name which is totally fine.
     
-    Follow these steps:
+    # Follow these steps:
     
-    1. Input Analysis and Relevance Check:
-        Determine if the input is related to database table data and can be answered with an SQL query (e.g., data retrieval, filtering, or updates).
-        If the input is irrelevant to table queries or cannot be answered with the available table data, respond with: "I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer."
+    # 1. Input Analysis and Relevance Check:
+    #     Determine if the input is related to database table data and can be answered with an SQL query (e.g., data retrieval, filtering, or updates).
+    #     If the input is irrelevant to table queries or cannot be answered with the available table data, respond with: "I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer."
     
-    2. Query Requirement Check:
-        For inputs related to SQL queries, check if the user has specified:
-        A specific column name they want data from.
-        Any specific value, filter, or condition (e.g., "age > 30" or "user_id = 123").
+    # 2. Query Requirement Check:
+    #     For inputs related to SQL queries, check if the user has specified:
+    #     A specific column name they want data from.
+    #     Any specific value, filter, or condition (e.g., "age > 30" or "user_id = 123").
     
-    3. Completeness Verification:
-        If both a column name and a filter condition/value are provided, respond with "Proceed" and briefly explain why the query can be executed (e.g., "The required column and condition are specified, so the query can be generated.").
-        If any required information is missing (column name or filter), prompt the user for the missing details, such as:
-        "Please specify the column(s) you want to retrieve."
-        "Please provide the filter condition or value needed for data retrieval."
+    # 3. Completeness Verification:
+    #     If both a column name and a filter condition/value are provided, respond with "Proceed" and briefly explain why the query can be executed (e.g., "The required column and condition are specified, so the query can be generated.").
+    #     If any required information is missing (column name or filter), prompt the user for the missing details, such as:
+    #     "Please specify the column(s) you want to retrieve."
+    #     "Please provide the filter condition or value needed for data retrieval."
     
-    4. Final Verification:
-        Always avoid responding "Proceed" if the input is unrelated to SQL data retrieval, table operations, or lacks sufficient information to generate a query.
-        Guide the user step-by-step, ensuring they understand the necessary details for a valid data retrival.
+    # 4. Final Verification:
+    #     Always avoid responding "Proceed" if the input is unrelated to SQL data retrieval, table operations, or lacks sufficient information to generate a query.
+    #     Guide the user step-by-step, ensuring they understand the necessary details for a valid data retrival.
         
-    Prioritize clarity and specificity in each response, helping the user provide accurate information for successful query generation. 
+    # Prioritize clarity and specificity in each response, helping the user provide accurate information for successful query generation. 
     
-    """
+    # """
     question_check_prompt = ChatPromptTemplate.from_messages(
         [("system", question_check_system), ("placeholder", "{messages}")]
     )
@@ -498,7 +508,7 @@ workflow.add_edge("execute_query", "query_gen")
 
 memory = MemorySaver()
 
-app = workflow.compile(checkpointer=memory)
+app = workflow.compile(checkpointer=memory, )
 
 
 def extract_result(input:str):
@@ -530,7 +540,7 @@ def validate_filter_values(filter_vals):
     
 def fetch_query_ai_result( session_id, messages):
     
-    config = {"configurable": {"thread_id": session_id}}
+    config = {"recursion_limit": 10, "configurable": {"thread_id": session_id}}
     with CosmosDBSaver.from_conn_info(
         endpoint=os.environ['COSMOS_DB_ENDPOINT'],
         key=os.environ['COSMOS_DB_KEY']+'==',
@@ -538,7 +548,7 @@ def fetch_query_ai_result( session_id, messages):
         container_name=os.environ['COSMOS_DB_CONTAINER']
     ) as checkpointer:
         app = workflow.compile(checkpointer=checkpointer)
-        result = app.invoke(input={"messages": messages}, config=config)
+        result = app.invoke({"messages": messages},config, debug=False)
         
     return result
 
@@ -619,8 +629,14 @@ async def give_input(user_input, session_id, not_first_message = False):
     try:
         result = get_answer(user_input, session_id, not_first_message)
         last_message = extract_result(result)
+        print("Last Message: ", last_message, "\n\n")
         sql_query = re.findall(r"```sql(.*?)```", last_message, re.DOTALL)
-        print("SQL QUERY",sql_query)
+        answer_summary =  re.findall(r"```summary(.*?)```", last_message, re.DOTALL)
+        print("SQL QUERY",# The above code is not complete as it only contains the variable
+        # `sql_query` without any assignment or operation. It seems like it is
+        # intended to store a SQL query, but without the actual query provided, it
+        # is not possible to determine what the code is doing.
+        sql_query)
         if len(sql_query)>0:
             sql_query = sql_query[0]
             print(sql_query)
@@ -639,15 +655,18 @@ async def give_input(user_input, session_id, not_first_message = False):
                     # return apply_filters(filter_input=user_input_filters, session_id=session_id)
                 # else:
                 #     apply_filters( final_filters, config)
+            if len(answer_summary)==0: 
+                answer_summary = ''
+            
             data_dict = df_to_dict(data)
-            return { 'text': generate_answer_response(user_input=user_input), 'data':data_dict }
+            return { 'text': answer_summary[0], 'data':data_dict }
         else:
             return { 'text': last_message, 'data':None }
+    except GraphRecursionError:
+        return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':None }
     except Exception as e:
-        print(e)
         return { 'text': 'Something went wrong! Please refresh the session and try again.', 'data':None }
-        pass
-
+    
 if __name__ == "__main__":
     import uuid
 
@@ -657,9 +676,8 @@ if __name__ == "__main__":
     # print(os.environ['COSMOS_DB_KEY'])
     while user_input != 'quit' or user_input != 'q':
         result = give_input(user_input=user_input, session_id=thread_id, not_first_message=not_first_message)
-        sql_query = result['text']
+        resp = result['text']
         data = result['data']
-        print('SQL Query: ', sql_query)
-        print('Here is the data you asked for: \nInput: ',data)
+        print(resp, '\n',data)
         not_first_message = True
         user_input = str(input("Input: "))
