@@ -121,7 +121,7 @@ function DataTable() {
         { field: 'Image', headerName: 'Image-AI', width: 150, renderCell: renderAccessCell },
         { field: 'Audio', headerName: 'Audio-AI', width: 150, renderCell: renderAccessCell },
         { field: 'Query', headerName: 'Query-AI', width: 150, renderCell: renderAccessCell },
-        { field: 'Legal', headerName: 'Legal-AI', width: 150, renderCell: renderAccessCell },
+        { field: 'Assist', headerName: 'Assist-AI', width: 150, renderCell: renderAccessCell },
         {
             field: 'action',
             headerName: 'Actions',

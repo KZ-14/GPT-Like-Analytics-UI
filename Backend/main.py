@@ -741,7 +741,11 @@ async def image_generation(input_model:ImageModel):
                 "negative_prompt": "(products, multiple products,deformed iris,deformed hands, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4), text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck"
             }
         )
-        return output
+        print(output)
+        urls = [url for url in output]
+        print(urls)
+        # print(output[0])
+        return str(urls[0])
     elif input_model.filter == "false":
         output = api.run(
         "black-forest-labs/flux-schnell",
@@ -757,8 +761,9 @@ async def image_generation(input_model:ImageModel):
             "num_inference_steps": 4
         }
          )
-        print(output)
-        return output
+        print(output[0])
+        print(output[0])
+        return str(output[0])
     
 import pandas as pd
 # @app.post("/query_AI/")

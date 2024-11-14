@@ -14,12 +14,14 @@ import {
   faImage,
   faDatabase,
   faEdit,
-  faTrash
+  faTrash,
+  faMessage
 } from "@fortawesome/free-solid-svg-icons";
 // import sendBtn from "../assets/send.svg";
 // import gptImgLogo from '../assets/openart-image_wjqZ6CoD_1727706108279_raw_processed.jpg';
 // import gptImgLogo from "../assets/logomaricogpt.png";
 // import gptImgLogo from "../assets/Image (1).jfif";
+import AssistAI from "../../assets/image.png"
 import { useEffect, useRef, useState } from "react";
 // import { new_chat_normal } from "../";
 import { useLocation, Navigate } from "react-router-dom";
@@ -133,14 +135,15 @@ function SuperApp ({ onNavigation }) {
         </button>
 
         <button
-          className={`superusercard ${appactive === "Legal" ? "active" : ""
+          className={`superusercard ${appactive === "Assist" ? "active" : ""
             }`}
-          onClick={() => handleAppClick("/Legal", "Legal")}
+          onClick={() => handleAppClick("/Assist", "Assist")}
         >
-          {/* <span className="appTile"><span className="appTitleText">
+          {/* <span className="appTile"><span className="appTitleText"> /home/admharshila/harshil/docker_test/MaricoGPT/Frontend/src/assets/image.png
                 Image </span> </span> */}
-          <FontAwesomeIcon className="sidebarlogo" icon={faGavel} />
-          <span className="sidebartext">Legal-AI</span>
+          <img className= "sidebarlogo" style={{ width: "40px", height: "40px" }} src={AssistAI} alt="admin" />
+          {/* <FontAwesomeIcon className="sidebarlogo" icon={faMessage} /> */}
+          <span className="sidebartext">Assist-AI</span>
           <span className="sidebartext-comming-soon">Stay Tuned!</span>
         </button>
         {/* <button className="superusercard" onClick={() => handleAppClick('/Image')}>

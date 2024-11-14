@@ -131,7 +131,7 @@ async def get_user_access_details():
         items = list(access_container.query_items(query=query, enable_cross_partition_query=True))
         def appCheck(appName,item):
             return True if appName in item['app_access'] else False
-        user_access_details = [{ "id" : item['id'], "Chat" : appCheck("Chat",item), "Document" : appCheck("Document",item), "Image" : appCheck("Image",item), "Audio" : appCheck("Audio",item),"Query" : appCheck("Query",item), "Legal" : appCheck("Legal",item)} for item in items]
+        user_access_details = [{ "id" : item['id'], "Chat" : appCheck("Chat",item), "Document" : appCheck("Document",item), "Image" : appCheck("Image",item), "Audio" : appCheck("Audio",item),"Query" : appCheck("Query",item), "Assist" : appCheck("Assist",item)} for item in items]
         print(items)
         return user_access_details
     except CosmosResourceNotFoundError:
@@ -197,7 +197,7 @@ async def give_all_access(input_model:UsernameModel):
         item['app_access'] = [
         "Chat",
         "Image",
-        "Legal",
+        "Assist",
         "Audio",
         "Document"
         ]

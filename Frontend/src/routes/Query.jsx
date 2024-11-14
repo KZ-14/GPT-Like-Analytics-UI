@@ -257,84 +257,52 @@ Feel free to ask me any queries related to this data!`,
         id: `${username}_${uuidv4()}`,
         title: "Query Session",
         messages: [{
-          text: ` ## Hi ${displayName} I am QueryAI, your AI Snowflake SQL Expert.
-
-I can help you query and explore your data from the DWH_QUERY_AI_BILLWISE table. 
+          text: `## Hi ${displayName} 
+### I am QueryAI, your AI Snowflake SQL Expert. I can help you query and explore your data from the DWH_QUERY_AI_BILLWISE table. 
             
-Here's the Markdown syntax with asterisks and other specifiers shown:
-## Available Metrics
+### Here are some of the available metrics you can query :
 
-### Data Categories
+***Product Sales Quantities and Values*** : NET_VALUE, GROSS_VALUE, QUANTITY, SALES_VOLUME
+***Discounts*** : TOTAL_DISCOUNT, PRIMARY_DISCOUNT, SECONDARY_DISCOUNT
+***Customer Information*** : CUSTOMER_NAME, DISTRIBUTOR_CODE
+***Geographic Information*** : STATE_NAME, ASM_AREA_NAME, CLUSTER_NAME
+***Product Details*** : MATERIAL_GROUP_CODE, MATERIAL_GROUP_DESC, MATERIAL_CODE, PARENT_MATERIAL_DESC, PORTFOLIO_NAME
+***Channels*** : CHANNEL_NAME
+***Sales Date*** : DATE
 
-- ***Product Sales Quantities and Values***:
-  NET_VALUE, GROSS_VALUE, QUANTITY, SALES_VOLUME
+### Example questions you might have:
 
-- ***Discounts***:
-  TOTAL_DISCOUNT, PRIMARY_DISCOUNT, SECONDARY_DISCOUNT
+1 )  What is the total net value of sales by each material group code?
+2 )  Which distributors have offered the highest primary discounts on their sales?
+3 )  Show the net value of sales and total discount for each state.
+4 )  Find the total sales volume and quantity for a cluster name "Cluster 2 North".
+5 )  What are the top 10 products by gross value?
+6 )  List the net value of sales and total discounts for customer name 'AAKASH ENTERPRISE'.
+7 )  Show the average gross value of sales for each channel name.
+8 )  Provide the net value of sales by date, limited to the last 10 days.
+9 )  Display the secondary discount and net value for sales in a specific ASM area name.
+10 )  Calculate the primary discount as a percentage of net value for each portfolio name.
 
-- ***Customer Information***:
-  CUSTOMER_NAME, DISTRIBUTOR_CODE
-
-- ***Geographic Information***:
-  STATE_NAME, ASM_AREA_NAME, CLUSTER_NAME
-
-- ***Product Details***:
-  MATERIAL_GROUP_CODE, MATERIAL_GROUP_DESC, MATERIAL_CODE, PARENT_MATERIAL_DESC, PORTFOLIO_NAME
-
-- ***Channels***:
-  CHANNEL_NAME
-
-- ***Sales Date***:
-  DATE
-
-## Example Questions
-
-1. What is the total net value of sales by each material group code?
-
-2. Which distributors have offered the highest primary discounts on their sales?
-
-3. Show the net value of sales and total discount for each state.
-
-4. Find the total sales volume and quantity for a cluster name "Cluster 2 North".
-
-5. What are the top 10 products by gross value?
-
-6. List the net value of sales and total discounts for customer name 'AAKASH ENTERPRISE'.
-
-7. Show the average gross value of sales for each channel name.
-
-8. Provide the net value of sales by date, limited to the last 10 days.
-
-9. Display the secondary discount and net value for sales in a specific ASM area name.
-
-10. Calculate the primary discount as a percentage of net value for each portfolio name.
-
-## Instructions for Asking Questions
+### To ensure I can provide you with the most accurate and relevant results, please keep the following instructions in mind while asking questions:
 
 1. ***Be Specific***: 
    Clearly specify the columns and metrics you are interested in. For example, if you want net value 
    and total discount, mention both in your question.
-
 2. ***Filtering***: 
    If you have specific criteria, such as a certain distributor, state, or date range, include 
    these details to narrow down the results.
-
 3. ***Aggregation***: 
    If you want aggregated data (e.g., total, average), mention how you want the data to be grouped.
-
 4. ***Limits and Ordering***: 
    If you need a limited number of results or have specific ordering requests, specify these details. 
    If not mentioned, results will be limited to 10 and sorted in descending order of the most 
    suitable numerical column.
-
 5. ***Fuzzy Match***: 
    If you are looking for partial matches (e.g., names or descriptions), It will use fuzzy matching 
    techniques (ilike %keyword%) to find relevant results.
-
 6. ***Accuracy***: 
    Ensure that your questions align with the columns available in the table. Avoid asking for 
    columns or data not present in the table.
-
 7. ***Formatting***: 
    Enter correct value to filter inside single quote. i.e., to Last month total sales for 
    material group code 'SAFF OATS'
@@ -509,26 +477,26 @@ with the corresponding queries!
   //   );
   // };
 
-  // const handleTitleChange = (id, newTitle) => {
-  //   setChatSessions((prev) =>
-  //     prev.map((session) =>
-  //       session.id === id ? { ...session, title: newTitle } : session
-  //     )
-  //   );
-  // };
+  const handleTitleChange = (id, newTitle) => {
+    setChatSessions((prev) =>
+      prev.map((session) =>
+        session.id === id ? { ...session, title: newTitle } : session
+      )
+    );
+  };
 
-  // const handleTitleSave = (id, newTitle) => {
-  //   setChatSessions((prev) =>
-  //     prev.map((session) =>
-  //       session.id === id ? { ...session, isEditing: false } : session
-  //     )
-  //   );
-  //   // const sessionTitle = chatSessions.find((session) => session.id === id)?.title;
-  //   update_title(id, newTitle);
-  //   // const text = "Saving the title for this chat session"
-  //   // BOT(text, id, sessionTitle, (chunk) => {
-  //   // });
-  // };
+  const handleTitleSave = (id, newTitle) => {
+    setChatSessions((prev) =>
+      prev.map((session) =>
+        session.id === id ? { ...session, isEditing: false } : session
+      )
+    );
+    // const sessionTitle = chatSessions.find((session) => session.id === id)?.title;
+    // update_title(id, newTitle);
+    // const text = "Saving the title for this chat session"
+    // BOT(text, id, sessionTitle, (chunk) => {
+    // });
+  };
 
   const handleKeyDown = (e, id, newTitle) => {
     if (e.key === "Enter") {
