@@ -5,6 +5,11 @@ from langchain_core.runnables import RunnableConfig
 # from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos import CosmosClient, PartitionKey
 import pickle
+import os
+from azure.cosmos import CosmosClient, exceptions
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from langgraph.checkpoint.base import (
     BaseCheckpointSaver,
@@ -15,7 +20,27 @@ from langgraph.checkpoint.base import (
     get_checkpoint_id,
 )
 
+def fetch_cosmosdb_data(partition_key_value,checkpoint_id):
+    
+    client = CosmosClient(os.environ["COSMOS_DB_ENDPOINT"], os.environ["COSMOS_DB_KEY"]+'==')
+    database = client.get_database_client(os.environ["COSMOS_DB_NAME"])
+    container = database.get_container_client(os.environ["COSMOS_DB_CONTAINER"])
 
+    # Query to check for the existence of the partition key
+    query = f"SELECT * FROM c WHERE c.key = @partition_key and c.id = @checkpoint_id"
+    parameters = [{"name": "@partition_key", "value": partition_key_value},{"name":"@checkpoint_id","value":checkpoint_id}]
+    items = list(container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
+    return items[0]
+    # try:
+    #     items = list(container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
+    #     if items:
+    #         # print(f"Partition key '{partition_key_value}' exists in the container.")
+    #         return True
+    #     else:
+    #         # print(f"Partition key '{partition_key_value}' does not exist in the container.")
+    #         return False
+    # except exceptions.CosmosHttpResponseError as e:
+    #     print(f"An error occurred: {e.message}")
 
 class CosmosDBSaver(BaseCheckpointSaver):
     """A checkpoint saver that stores checkpoints in an Azure Cosmos DB database."""
@@ -153,6 +178,18 @@ class CosmosDBSaver(BaseCheckpointSaver):
                 "value": str(pickle.dumps(value,0), 'UTF-8'),
             })
         upsert_query = {"thread_id": thread_id, "checkpoint_ns": checkpoint_ns, "checkpoint_id": checkpoint_id}
-        doc = self.container.read_item(item=checkpoint_id, partition_key=thread_id)
+        # doc = self.container.read_item(item=checkpoint_id, partition_key=thread_id)
+        try:
+            doc = self.container.read_item(item=checkpoint_id, partition_key=thread_id)
+        except Exception as e:
+            doc = fetch_cosmosdb_data(partition_key_value=thread_id,checkpoint_id=checkpoint_id)
+            print("COSMOS DB ERROR",thread_id,checkpoint_id)
+            pass
+            # import traceback
+            # print(str(traceback.format_exc()))
         doc["writes"] = writes_data
         self.container.upsert_item(doc)
+        
+        
+if __name__ == "__main__":
+    print(fetch_cosmosdb_data(partition_key_value="harshil.agrawal@marico.com_75e14c70-58f7-4ba2-bba4-c8134b9a528f",checkpoint_id="1efa1980-f524-6dd1-800a-816650f78f27"))

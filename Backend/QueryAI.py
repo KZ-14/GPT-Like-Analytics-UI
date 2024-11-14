@@ -34,9 +34,10 @@ load_dotenv()
 import os
 
 def check_partition_key(partition_key_value):
-    client = CosmosClient(os.getenv("COSMOS_DB_ENDPOINT"), os.getenv("COSMOS_DB_KEY"))
-    database = client.get_database_client(os.getenv("COSMOS_DB_NAME"))
-    container = database.get_container_client(os.getenv("COSMOS_DB_CONTAINER"))
+    
+    client = CosmosClient(os.environ["COSMOS_DB_ENDPOINT"], os.environ["COSMOS_DB_KEY"]+'==')
+    database = client.get_database_client(os.environ["COSMOS_DB_NAME"])
+    container = database.get_container_client(os.environ["COSMOS_DB_CONTAINER"])
 
     # Query to check for the existence of the partition key
     query = f"SELECT * FROM c WHERE c.key = @partition_key"
@@ -45,10 +46,10 @@ def check_partition_key(partition_key_value):
     try:
         items = list(container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
         if items:
-            print(f"Partition key '{partition_key_value}' exists in the container.")
+            # print(f"Partition key '{partition_key_value}' exists in the container.")
             return True
         else:
-            print(f"Partition key '{partition_key_value}' does not exist in the container.")
+            # print(f"Partition key '{partition_key_value}' does not exist in the container.")
             return False
     except exceptions.CosmosHttpResponseError as e:
         print(f"An error occurred: {e.message}")
@@ -304,40 +305,71 @@ class State(TypedDict):
 workflow = StateGraph(State)
 
 
+def generate_answer_response(user_input):
+    """
+    Check the sql query for the check filters.
+    """
+    
+    filter_check_system ="""
+    There is agent to Query AI which respond to the user by fetching the data from 
+    the database. Your work generate the detailed heading of answer and should not include any 
+    other information. For reference look at following example:
+    
+    Question: Show me sales for the brand PCNO
+    Response: Sales data for the brand PCNO:
+    
+    Question: Top performing brands last year
+    Response: Last year top performing brands as follows:
+    
+    Question: Use ASM Rajasthan
+    Response: Updated data for the ASM Rajasthan
+    
+    DO NOT PROVIDE ANY EXTRA INFORMATION.
+    
+    """
+    # user_input = f"Input: {user_input} Data: {str(data)}"
+    result = llm.invoke([("system", filter_check_system), ('user',user_input)])
+    return result.content.replace("Response: ", '')
+
+
 def question_check(state: State) -> dict[str, list[AIMessage]]:
     """
     This node validates if the user's query can be answered using the provided schema.
     """
     question_check_system ="""
-    You will be acting as an AI Snowflake SQL Expert. You goal is to check the user input and decide the weather user input can be answered by using the available table schema.
-    Ignore the system messages and tool messages and focus on user inputs only.
-    If a query can be generated for the user question or the input is a sql query, respond with 'Proceed'.
-    There are few exceptions input which can be answered with 'Proceed' are as follwoing:
-        - Input is to do some changes in previous data
-        - Input is to correction in previous data
-        - Input is to apply any filter
-    Otherwise, Output with 'This question can not be answered please ask correct question.'.
-    Do not generate anything else in the given responses.
+You are an AI expert in Snowflake SQL. Your task is to review the most recent user input and determine if it can be answered using SQL queries based on available table information.
+
+Guidelines:
+
+If the input can be answered with a SQL query (e.g., data retrieval, applying filters, corrections, or modifications to previous data):
+
+Check if the user has specified a specific value or filter condition they want data for.
+Ensure the relevant column name is mentioned.
+If both the specific value and column name are provided, respond with "Proceed" and provide a brief reason justifying why the query can be executed.
+If the specific value or column name is missing, prompt the user to provide the necessary details for fetching the data.
+If the input does not relate to table queries, or if it cannot be answered with available table data, respond with: "This question cannot be answered; please ask a relevant question."
+
+Be careful to avoid responding "Proceed" to irrelevant inputs or questions unrelated to SQL data retrieval or table operations.
     """
     question_check_prompt = ChatPromptTemplate.from_messages(
         [("system", question_check_system), ("placeholder", "{messages}")]
     )
     question_check_llm = question_check_prompt | llm
-        
+    print("QUESTION STATE CHECK",state)
     result  = question_check_llm.invoke(state)
-    
-    if result.content != 'Proceed':
+    print("Question Check Result: ", result.content)
+    if result.content.startswith('Proceed'):
         return {
             "messages": [
                 AIMessage(
-                    content=f"This question can not be answered please ask correct question."
+                    content="Proceed" 
                 )
             ]
         }
         
     return {
         "messages": [
-            AIMessage(content="Proceed"),
+            AIMessage(content=result.content),
         ]
     }
 
@@ -470,7 +502,7 @@ def fetch_query_ai_result( session_id, messages):
     config = {"configurable": {"thread_id": session_id}}
     with CosmosDBSaver.from_conn_info(
         endpoint=os.environ['COSMOS_DB_ENDPOINT'],
-        key=os.environ['COSMOS_DB_KEY'],
+        key=os.environ['COSMOS_DB_KEY']+'==',
         db_name=os.environ['COSMOS_DB_NAME'],
         container_name=os.environ['COSMOS_DB_CONTAINER']
     ) as checkpointer:
@@ -484,7 +516,7 @@ def fetch_latest_checkpoint(session_id):
     config = {"configurable": {"thread_id": session_id}}
     with CosmosDBSaver.from_conn_info(
         endpoint=os.environ['COSMOS_DB_ENDPOINT'],
-        key=os.environ['COSMOS_DB_KEY'],
+        key=os.environ['COSMOS_DB_KEY']+'==',
         db_name=os.environ['COSMOS_DB_NAME'],
         container_name=os.environ['COSMOS_DB_CONTAINER']
     ) as checkpointer:
@@ -506,10 +538,8 @@ def get_answer(user_input, session_id, not_first_message = False, filter_input=N
     not_first_message = check_partition_key(session_id)
     if not_first_message:
         last_message = fetch_latest_checkpoint(session_id)['channel_values']['messages'][-1]
-        print(last_message)
         if ('tool_calls' in last_message.additional_kwargs) ==False:
-            print("USING AI MESSAGE METHOD")
-            message = AIMessage( content=user_input)
+            message = HumanMessage( content=user_input)
         elif filter_input:
             input = f'Filter the data for columns and values {filter_input} in the final result query.'
             message = ToolMessage(
@@ -517,6 +547,7 @@ def get_answer(user_input, session_id, not_first_message = False, filter_input=N
                     content=input,
                 )
         else:
+            user_input = f"The user have asked the following question now: '{user_input}' "
             message = ToolMessage(
                     tool_call_id=last_message.tool_calls[0]["id"],
                     content=user_input,
@@ -554,42 +585,51 @@ async def give_input(user_input, session_id, not_first_message = False):
         user_input (_type_): _description_
     """
     
-    result = get_answer(user_input, session_id, not_first_message)
-    last_message = extract_result(result)
-
-    if last_message != 'This question can not be answered please ask correct question.':
-        sql_query = re.findall(r"```sql(.*?)```", last_message, re.DOTALL)[0]
-        data = get_df_from_query(query=sql_query)
-        # check_query_result = check_filters(sql_query)
-        
-        # if check_query_result.content == 'NO FILTER REQUIRED':        
-        #     data = get_df_from_query(query=sql_query)
-        # else:
-        #     # print(check_query_result.content)
-        #     filters_required = execute_sql_queries(check_query_result.content)
-        #     final_filters, user_input_filters = validate_filter_values(filter_vals=filters_required)
+    try:
+        result = get_answer(user_input, session_id, not_first_message)
+        last_message = extract_result(result)
+        print("LAST MESSAGE",last_message)
+        sql_query = re.findall(r"```sql(.*?)```", last_message, re.DOTALL)
+        print("SQL QUERY",sql_query)
+        if len(sql_query)>0:
+            print("IF ME JAA RAHA HAI")
+            sql_query = sql_query[0]
+            print(sql_query)
+            data = get_df_from_query(query=sql_query)
+            # check_query_result = check_filters(sql_query)
             
-        #     if len(user_input_filters)>0:
-        #         return {'user_input_required': user_input_filters}
-                # return apply_filters(filter_input=user_input_filters, session_id=session_id)
+            # if check_query_result.content == 'NO FILTER REQUIRED':        
+            #     data = get_df_from_query(query=sql_query)
             # else:
-            #     apply_filters( final_filters, config)
-        data_dict = df_to_dict(data)
-        return { 'text': sql_query, 'data':data_dict }
-    else:
-        return { 'text': last_message, 'data':None }
-
+            #     # print(check_query_result.content)
+            #     filters_required = execute_sql_queries(check_query_result.content)
+            #     final_filters, user_input_filters = validate_filter_values(filter_vals=filters_required)
+                
+            #     if len(user_input_filters)>0:
+            #         return {'user_input_required': user_input_filters}
+                    # return apply_filters(filter_input=user_input_filters, session_id=session_id)
+                # else:
+                #     apply_filters( final_filters, config)
+            data_dict = df_to_dict(data)
+            return { 'text': generate_answer_response(user_input=user_input), 'data':data_dict }
+        else:
+            print("ELSE ME JAA RAHA HAI")
+            return { 'text': last_message, 'data':None }
+    except Exception as e:
+        print(e)
+        return { 'text': 'Something went wrong! Please refresh the session and try again.', 'data':None }
+        pass
 
 if __name__ == "__main__":
     import uuid
 
     thread_id = str(uuid.uuid4())
-
     user_input = str(input("Hey! I'am Query AI. How can I help you today?\n"))
     not_first_message = False
+    # print(os.environ['COSMOS_DB_KEY'])
     while user_input != 'quit' or user_input != 'q':
         result = give_input(user_input=user_input, session_id=thread_id, not_first_message=not_first_message)
-        sql_query = result['sql_query']
+        sql_query = result['text']
         data = result['data']
         print('SQL Query: ', sql_query)
         print('Here is the data you asked for: \nInput: ',data)

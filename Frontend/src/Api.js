@@ -267,7 +267,7 @@ export async function BOT_IMAGE(text,payload) {
     console.log(test)
     try {
         // const response = await fetch('https://chief-maggot-lasting.ngrok-free.app/image_generation', {
-        const response = await fetch('https://maricogpt.maricoapps.biz/backend/generate_image', {
+        const response = await fetch('https://maricogpt.maricoapps.biz/backend/generate_image/', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',

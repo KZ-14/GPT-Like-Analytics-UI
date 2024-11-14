@@ -11,7 +11,7 @@ import Chat from './Chat';
 import Image from './Image';
 import Document from './Document';
 import Audio from './Audio';
-import Legal from './Legal';
+import Assist from './Assist';
 import Query from './Query';
 import ErrorPage from "../error-page";
 import PreviewVideo from './Components/PreviewVideo';
@@ -24,6 +24,7 @@ ReactGA.initialize('G-3Y1CQRB9Z7');
 
 function App() {
   const [Mainusername, setMainUsername] = useState(() => localStorage.getItem("username") || "");
+  // const [Mainusername, setMainUsername] = useState("harshil.agrawal@marico.com");
   const [allowedApps, setAllowedApps] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -125,11 +126,11 @@ function App() {
       />,
     },
     {
-      path: "/legal",
+      path: "/Assist",
       element: <ProtectedRoute 
-        component={Legal} 
+        component={Assist} 
         allowedApps={allowedApps} 
-        appName="Legal"
+        appName="Assist"
         isInitialized={isInitialized}
       />,
     },
