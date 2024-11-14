@@ -9,7 +9,7 @@ from pydantic import BaseModel
 # from Conversation_model import ChatBot, upload_store_to_cosmosdb
 from Backend.ChatAI import ChatBot,upload_store_to_cosmosdb,load_store_from_cosmosdb,upload_token_store_to_cosmosdb
 # from Conversation_model_RAG import Chatbot_RAG,upload_store_to_cosmosdb_doc,CreateRetriever
-from Backend.Dev_Files.TestRAG import Chatbot_RAG,upload_store_to_cosmosdb_rag,CreateRetriever,CallRetriever,load_store_from_cosmosdb_rag
+from Backend.Dev_Files.QueryAI_TEST import Chatbot_RAG,upload_store_to_cosmosdb_rag,CreateRetriever,CallRetriever,load_store_from_cosmosdb_rag
 # from ./helpers import Conversation_model_RAG
 from azure.storage.blob import BlobServiceClient,generate_blob_sas,BlobSasPermissions
 from datetime import datetime, timedelta

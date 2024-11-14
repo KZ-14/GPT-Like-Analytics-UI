@@ -329,13 +329,21 @@ async def Chatbot_RAG(input,session_id,title,retriever) -> AsyncIterator[str]:
     #"Replace the output formmating with HTML tags please do not include <html> and <body> and do not add multiple line breaks between html tags."
 
     system_prompt = (
-    "Use the following pieces of retrieved context to answer "
-    "the question. If you don't know the answer, say that you don't know."
-    "Retrieved context can be reffered as document/ppt/pdf/file/code/slides/research paper"
-    "Do not answer out of context questions instead give this reply"
-    "The Context for the above question is not provided or didn't found in the document."
-    "\n\n"
-    "{context}"
+    # "Use the following pieces of retrieved context to answer "
+    # "the question. If you don't know the answer, say that you don't know."
+    # "Retrieved context can be reffered as document/ppt/pdf/file/code/slides/research paper"
+    # "Do not answer out of context questions instead give this reply"
+    # "The Context for the above question is not provided or didn't found in the document."
+    # "\n\n"
+    # "{context}"
+    
+    """Use the retrieved context to answer the question accurately.
+    If the information needed is not found within the provided document, file, code, or slides,
+    respond with: 'The context for the above question was not provided or was not found in the document.' 
+    answer only based on the given context and do not respond to questions that fall outside of it.
+    User will always ask question from the document
+    \n\n
+    {context}"""
     )
 
     contextualize_q_system_prompt = (
