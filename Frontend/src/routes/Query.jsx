@@ -255,7 +255,7 @@ Feel free to ask me any queries related to this data!`,
     if (chatSessions.length === 0) {
       const initialSession = {
         id: `${username}_${uuidv4()}`,
-        title: "Query Session",
+        title: "BILLWISE DATA",
         messages: [{
           text: `## Hi ${displayName} 
 ### I am QueryAI, your AI Snowflake SQL Expert. I can help you query and explore your data from the DWH_QUERY_AI_BILLWISE table. 
