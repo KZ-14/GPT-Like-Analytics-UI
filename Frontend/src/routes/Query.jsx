@@ -278,7 +278,7 @@ Feel free to ask me any queries related to this data!`,
 4 )  Find the total sales volume and quantity for a cluster name "Cluster 2 North".
 5 )  What are the top 10 products by gross value?
 6 )  List the net value of sales and total discounts for customer name 'AAKASH ENTERPRISE'.
-7 )  Show the average gross value of sales for each channel name.
+7 )  Show the monthly average gross value for each channel.
 8 )  Provide the net value of sales by date, limited to the last 10 days.
 9 )  Display the secondary discount and net value for sales in a specific ASM area name.
 10 )  Calculate the primary discount as a percentage of net value for each portfolio name.
