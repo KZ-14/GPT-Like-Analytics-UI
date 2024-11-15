@@ -27,7 +27,7 @@ const PreviewVideo = () => {
         color: '#333',
         textAlign: 'center',
         borderBottom: '1px solid #ccc',
-        marginTop : '40%'
+        marginTop : '20%'
       }}>
         <h1>You do not have access to this application. Please contact the administrator</h1>
       </header>
