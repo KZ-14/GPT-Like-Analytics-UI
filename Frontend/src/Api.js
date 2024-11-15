@@ -1,7 +1,7 @@
 
 export async function App_Access(username){
     // console.log(text)
-    const response = await fetch(`https://maricogpt.maricoapps.biz/backend/appaccess/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/appaccess/`, {
         method: "POST",
         headers: {
             "Accept": "application/json", // Accept text/plain for streaming
@@ -18,7 +18,7 @@ export async function App_Access(username){
 
 export async function BOT(message, sessionId,Title, onChunkReceived) {
     try {
-        const response = await fetch("https://maricogpt.maricoapps.biz/backend/bot", {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/bot`, {
             method: "POST",
             headers: {
                 "Accept": "text/plain", // Accept text/plain for streaming
@@ -63,7 +63,7 @@ export async function BOT(message, sessionId,Title, onChunkReceived) {
 
 export async function RAG_BOT(message, sessionId,Title, onChunkReceived) {
     try {
-        const response = await fetch(`https://maricogpt.maricoapps.biz/backend/chatbot-rag/`, {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/chatbot-rag/`, {
             method: "POST",
             headers: {
                 "Accept": "text/plain", // Accept text/plain for streaming
@@ -114,7 +114,7 @@ export async function RAG_BOT(message, sessionId,Title, onChunkReceived) {
 
 export async function Load_Chat(text){
     // console.log(text)
-    const response = await fetch(`https://maricogpt.maricoapps.biz/backend/all_chat_load/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/all_chat_load/`, {
         method: "POST",
         headers: {
             "Accept": "application/json", // Accept text/plain for streaming
@@ -131,7 +131,7 @@ export async function Load_Chat(text){
 
 export async function Load_Doc_Chat(text){
     // console.log(text)
-    const response = await fetch(`https://maricogpt.maricoapps.biz/backend/all_doc_chat_load/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/all_doc_chat_load/`, {
         method: "POST",
         headers: {
             "Accept": "application/json", // Accept text/plain for streaming
@@ -147,7 +147,7 @@ export async function Load_Doc_Chat(text){
 }
 
 export async function new_chat_normal(session_id){
-    await fetch("https://maricogpt.maricoapps.biz/backend/new-chat/", {
+    await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/new-chat/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export async function new_chat_normal(session_id){
 }
 
 export async function new_chat_document(session_id){
-    await fetch("https://maricogpt.maricoapps.biz/backend/new-chat-document/", {
+    await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/new-chat-document/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -171,7 +171,7 @@ export async function new_chat_document(session_id){
 }
 
 export async function call_retriever(session_id){
-    await fetch("https://maricogpt.maricoapps.biz/backend/callRetriever/", {
+    await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/callRetriever/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -184,7 +184,7 @@ export async function call_retriever(session_id){
 
 
 export async function generate_title(text){
-    const response= await fetch("https://maricogpt.maricoapps.biz/backend/title", {
+    const response= await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/title`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -202,7 +202,7 @@ export async function generate_title(text){
 export async function upload_File_Azure(formData){
     try
     {
-    const response = await fetch("https://maricogpt.maricoapps.biz/backend/upload-to-azure/", {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/upload-to-azure/`, {
         method: "POST",
         body: formData,
     });
@@ -223,7 +223,7 @@ export async function upload_File_Azure(formData){
 
 export async function Chat_history_Load_Backend(sessionId){
     try{
-    fetch(`https://maricogpt.maricoapps.biz/backend/ChatHistoryLoad_Backend/`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}backend/ChatHistoryLoad_Backend/`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -241,7 +241,7 @@ export async function Chat_history_Load_Backend(sessionId){
 
 export async function doc_Chat_history_Load_Backend(sessionId){
     try{
-    fetch(`https://maricogpt.maricoapps.biz/backend/docChatHistoryLoad_Backend/`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}backend/docChatHistoryLoad_Backend/`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -267,7 +267,7 @@ export async function BOT_IMAGE(text,payload) {
     // console.log(test)
     try {
         // const response = await fetch('https://chief-maggot-lasting.ngrok-free.app/image_generation', {
-        const response = await fetch('https://maricogpt.maricoapps.biz/backend/generate_image/', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/generate_image/`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ export async function BOT_IMAGE(text,payload) {
 
 export async function Delete_chat(sessionId){
     try{
-    fetch(`https://maricogpt.maricoapps.biz/backend/delete_normal_chat/`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}backend/delete_normal_chat/`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -345,7 +345,7 @@ export async function Delete_chat(sessionId){
 
 export async function update_title(sessionId,title){
     try{
-    fetch(`https://maricogpt.maricoapps.biz/backend/update_title/`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}backend/update_title/`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -363,7 +363,7 @@ export async function update_title(sessionId,title){
 
 
 export async function query_ai(text,session_id){
-    const response= await fetch("https://maricogpt.maricoapps.biz/backend/query_AI/", {
+    const response= await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/query_AI/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -386,7 +386,7 @@ export async function query_ai(text,session_id){
 }
 
 export async function query_ai_with_filters(filters,session_id){
-    const response= await fetch("https://maricogpt.maricoapps.biz/backend/query_AI_with_filters/", {
+    const response= await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/query_AI_with_filters/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -408,7 +408,7 @@ export async function query_ai_with_filters(filters,session_id){
 }
 // export async function BOT(message, sessionId) {
 //     try {
-//         const response = await fetch("https://maricogpt.maricoapps.biz/backend/bot", {
+//         const response = await fetch("${process.env.REACT_APP_API_BASE_URL}backend/bot", {
 //             method: "POST",
 //             headers: {
 //                 "Accept": 'application/json',
@@ -443,7 +443,7 @@ export async function query_ai_with_filters(filters,session_id){
 
 // export async function RAG_BOT(message, sessionId, onChunkReceived) {
 //     try {
-//         const response = await fetch(`https://maricogpt.maricoapps.biz/backend/chatbot-rag/`, {
+//         const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}backend/chatbot-rag/`, {
 //             method: "POST",
 //             headers: {
 //                 "Accept": "text/plain", // Accept text/plain for streaming
@@ -487,7 +487,7 @@ export async function query_ai_with_filters(filters,session_id){
 
 // export async function BOT(message, sessionId, onStream) {
 //     try {
-//         const response = await fetch("https://maricogpt.maricoapps.biz/backend/bot", {
+//         const response = await fetch("${process.env.REACT_APP_API_BASE_URL}backend/bot", {
 //             method: "POST",
 //             headers: {
 //                 "Accept": 'application/json',

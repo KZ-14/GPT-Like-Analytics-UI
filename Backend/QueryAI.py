@@ -257,21 +257,27 @@ query_check = query_check_prompt | llm.bind_tools(
     [db_query_tool], tool_choice="auto"
 )
 
-query_gen_system = """You are a SQL expert with a strong attention to detail.
+query_gen_system = """
+
+You are a SQL expert with a strong attention to detail.
 
 Given an input question, output a syntactically correct Snowflake query to run, then look at the results of the query and return the answer.
 
 DO NOT CALL TOOL BESIDE SubmitFinalAnswer TO SUBMIT THE FINAL ANSWER and MUST INCLUDE THE SQL QUERY IN THE FINAL ANSWER THAT GENERATE THE FINAL ANSWER.
-Only  wrap the generated sql code with ``` sql code markdown in this format e.g:
+
+
+MUST  wrap the generated sql code with ``` sql code markdown in this format e.g:
 ```sql
 (select 1) union (select 2)
 ``` 
 
 Also wrap one line summary for the answer as ```summary markdown in final answer e.g.
 ```summary
-answer summary
+
 ```
-Summary should not include any answer.
+
+
+Summary should not include any data answer.
 
 
 When generating the query:
@@ -298,10 +304,11 @@ Here are critical rules for the interaction you must abide:
 10. Make sure the information is asked is returned no extra information is included in the query, aggregate  data for the information asked do not return any extra column information.
 11. NEVER make stuff up if you don't have enough information to answer the query... just say you don't have enough information.
 12. Divide the net values and gross values by 10000000 to convert the values in the crore also rename the column name accordingly.
+13. As the is available on daily level, and for a single day there are multiple data are records in the table. While aggregating the data on daily, weekly, monthly or yearly first aggregate the data on day level and onwards.
 </rules>
 
 Don't forget to use "ilike %keyword%" for fuzzy match queries (especially for variable_name column)
-
+Don't forget wrap the generated sql code with ``` sql code markdown and  wrap one line summary for the answer as ```summary markdown 
 If you get an error while executing a query, rewrite the query and try again.
 
 If you get an empty result set, you should try to rewrite the query to get a non-empty result set and after 5 iterations you still get the empty set submit final answer 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.'.
@@ -632,14 +639,10 @@ async def give_input(user_input, session_id, not_first_message = False):
         print("Last Message: ", last_message, "\n\n")
         sql_query = re.findall(r"```sql(.*?)```", last_message, re.DOTALL)
         answer_summary =  re.findall(r"```summary(.*?)```", last_message, re.DOTALL)
-        print("SQL QUERY",# The above code is not complete as it only contains the variable
-        # `sql_query` without any assignment or operation. It seems like it is
-        # intended to store a SQL query, but without the actual query provided, it
-        # is not possible to determine what the code is doing.
-        sql_query)
+        print( "SQL QUERY", sql_query, len(sql_query))
         if len(sql_query)>0:
             sql_query = sql_query[0]
-            sql_query = sql_query.upper().replace('LIMIT 10',"")
+            sql_query = sql_query.upper().replace("LIMIT 10", "")
             data = get_df_from_query(query=sql_query)
             # check_query_result = check_filters(sql_query)
             
@@ -657,14 +660,17 @@ async def give_input(user_input, session_id, not_first_message = False):
                 #     apply_filters( final_filters, config)
             if len(answer_summary)==0: 
                 answer_summary = ''
+            else:
+                answer_summary = answer_summary[0]
             
             data_dict = df_to_dict(data)
-            return { 'text': answer_summary[0], 'data':data_dict }
+            return { 'text': answer_summary, 'data':data_dict }
         else:
-            return { 'text': last_message, 'data':None }
+            return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':None }
     except GraphRecursionError:
         return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':None }
     except Exception as e:
+        print(e)
         return { 'text': 'Something went wrong! Please refresh the session and try again.', 'data':None }
     
 if __name__ == "__main__":

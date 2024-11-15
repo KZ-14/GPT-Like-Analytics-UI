@@ -15,3 +15,5 @@ admin-backend/myapp.log
 Backend/main_environment/
 
 Backend/myapp.log
+
+Frontend/.env

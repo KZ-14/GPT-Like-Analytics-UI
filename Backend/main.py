@@ -129,7 +129,7 @@ class QueryFilterModel(BaseModel):
     session_id: str
     filters : dict
     
-origins = ["http://10.124.10.136:3000","http://localhost:3000","https://maricogpt.maricoapps.biz/"]
+origins = ["https://devmaricogpt.maricoapps.biz/","https://maricogpt.maricoapps.biz/"]
 
 app.add_middleware(
     CORSMiddleware,
