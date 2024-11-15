@@ -98,7 +98,7 @@ function Document() {
 
     useEffect(() => {
         let handleBeforeUnload = (event) => {
-            console.log("handleBeforeUnload called");
+            // console.log("handleBeforeUnload called");
             new_chat_document(activedocSessionId);
             event.preventDefault();
             event.returnValue = "";
@@ -196,7 +196,7 @@ function Document() {
             // }
 
             const result = await upload_File_Azure(formData);
-            console.log("File uploaded successfully:", result);
+            // console.log("File uploaded successfully:", result);
 
             updatedocMessages("Document has uploaded successfully.", true);
             setdocChatSessions(prevState =>
@@ -830,7 +830,7 @@ function Document() {
     // };
 
     const handleShare = (id) => {
-        console.log(`Sharing chat ${id}`);
+        // console.log(`Sharing chat ${id}`);
     };
 
     const handleDelete = async (id) => {

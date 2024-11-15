@@ -105,7 +105,7 @@ function Query() {
 
   useEffect(() => {
     let handleBeforeUnload = (event) => {
-      console.log("handleBeforeUnload called");
+      // console.log("handleBeforeUnload called");
       new_chat_normal(activeSessionId);
       event.preventDefault();
       event.returnValue = "";
@@ -187,7 +187,7 @@ Feel free to ask me any queries related to this data!`,
       }
       return session;
     }));
-    console.log("ACTIVTE SESSION ID",activeSessionId)
+    // console.log("ACTIVTE SESSION ID",activeSessionId)
     const res = await query_ai(text, activeSessionId);
     setIsBotTyping(false);
 
@@ -251,7 +251,7 @@ Feel free to ask me any queries related to this data!`,
 
 
   const initializeChatSession = async () => {
-    console.log("Existing Session length", chatSessions.length);
+    // console.log("Existing Session length", chatSessions.length);
     if (chatSessions.length === 0) {
       const initialSession = {
         id: `${username}_${uuidv4()}`,
@@ -316,7 +316,7 @@ with the corresponding queries!
       };
       setChatSessions([initialSession]);
       setActiveSessionId(initialSession.id);
-      console.log(chatSessions);
+      // console.log(chatSessions);
       // await LoadSessions(username.trim());
     }
   };
@@ -515,7 +515,7 @@ with the corresponding queries!
   };
 
   const handleShare = (id) => {
-    console.log(`Sharing chat ${id}`);
+    // console.log(`Sharing chat ${id}`);
   };
 
   const handleDelete = async (id) => {

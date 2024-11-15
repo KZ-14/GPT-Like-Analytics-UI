@@ -46,7 +46,7 @@ function SuperApp ({ onNavigation }) {
     const handleAppClick = (path, appname) => {
       if (appactive === "Chat" && appname !== "Chat") {
         // new_chat_normal();
-        console.log(appactive,appname)
+        // console.log(appactive,appname)
       }
 
       if (appactive === "Document" && appname !== "Document") {
@@ -54,8 +54,8 @@ function SuperApp ({ onNavigation }) {
       }
 
       if (appactive !== appname) {
-        console.log(appactive)
-        console.log(appname)
+        // console.log(appactive)
+        // console.log(appname)
         setAppactive(appname);
         onNavigation(true); // Set isLeaving to true
       }
