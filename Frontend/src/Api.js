@@ -130,7 +130,7 @@ export async function Load_Chat(text){
 }
 
 export async function Load_Doc_Chat(text){
-    console.log(text)
+    // console.log(text)
     const response = await fetch(`https://maricogpt.maricoapps.biz/backend/all_doc_chat_load/`, {
         method: "POST",
         headers: {
@@ -142,7 +142,7 @@ export async function Load_Doc_Chat(text){
     })
     });
     const result = await response.json();
-    console.log(result)
+    // console.log(result)
     return result
 }
 
@@ -194,7 +194,7 @@ export async function generate_title(text){
         })
       });
     const result = await response.json();
-    console.log(result)
+    // console.log(result)
     return result
 }
 
@@ -264,7 +264,7 @@ export async function BOT_IMAGE(text,payload) {
         brand: payload.brand,
         position: payload.product
     }
-    console.log(test)
+    // console.log(test)
     try {
         // const response = await fetch('https://chief-maggot-lasting.ngrok-free.app/image_generation', {
         const response = await fetch('https://maricogpt.maricoapps.biz/backend/generate_image/', {
@@ -282,7 +282,7 @@ export async function BOT_IMAGE(text,payload) {
     
         var result = await response.json();
         // var image = `data:image/png;base64,${result.image}`
-        console.log('Response from API:', result);
+        // console.log('Response from API:', result);
         } catch (error) {
         console.error('Error sending image request:', error);
         }
@@ -376,12 +376,12 @@ export async function query_ai(text,session_id){
       });
     const result = await response.json();
     if(result.text) {
-        console.log(result);
+        // console.log(result);
     }
     if(result.user_input_required){
-        console.log(result);
+        // console.log(result);
     }
-    console.log(result);
+    // console.log(result);
     return result
 }
 
@@ -398,12 +398,12 @@ export async function query_ai_with_filters(filters,session_id){
       });
     const result = await response.json();
     if(result.text) {
-        console.log(result);
+        // console.log(result);
     }
     if(result.user_input_required){
-        console.log(result);
+        // console.log(result);
     }
-    console.log(result);
+    // console.log(result);
     return result
 }
 // export async function BOT(message, sessionId) {

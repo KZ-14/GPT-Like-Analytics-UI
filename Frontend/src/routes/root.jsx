@@ -94,7 +94,7 @@ function Root({ setMainUsername }) {
         }
         return res.json();
       });
-      console.log("Heeeeyyy")
+      // console.log("Heeeeyyy")
       setUserProfile(profileData);
       setMainUsername(profileData.userPrincipalName);
       localStorage.setItem('username', profileData.userPrincipalName);

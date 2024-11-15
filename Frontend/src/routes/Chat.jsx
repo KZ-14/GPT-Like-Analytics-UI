@@ -104,7 +104,7 @@ function Chat() {
 
   useEffect(() => {
     let handleBeforeUnload = (event) => {
-      console.log("handleBeforeUnload called");
+      // console.log("handleBeforeUnload called");
       new_chat_normal(activeSessionId);
       event.preventDefault();
       event.returnValue = "";
@@ -119,13 +119,13 @@ function Chat() {
 
   const LoadSessions = async (text) => {
     const storedSession = await Load_Chat(text);
-    console.log(storedSession);
+    // console.log(storedSession);
     setChatSessions((prevSessions) => [...prevSessions, ...storedSession]);
-    console.log("Done");
+    // console.log("Done");
   };
 
   const initializeChatSession = async () => {
-    console.log("Existing Session length", chatSessions.length);
+    // console.log("Existing Session length", chatSessions.length);
     if (chatSessions.length === 0) {
       const initialSession = {
         id: `${username}_${uuidv4()}`,
@@ -139,7 +139,7 @@ function Chat() {
       };
       setChatSessions([initialSession]);
       setActiveSessionId(initialSession.id);
-      console.log(chatSessions);
+      // console.log(chatSessions);
       await LoadSessions(username.trim());
     }
   };
@@ -338,7 +338,7 @@ function Chat() {
   };
 
   const handleShare = (id) => {
-    console.log(`Sharing chat ${id}`);
+    // console.log(`Sharing chat ${id}`);
   };
 
   const handleDelete = async (id) => {

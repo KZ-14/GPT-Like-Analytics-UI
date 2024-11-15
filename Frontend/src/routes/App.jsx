@@ -66,9 +66,9 @@ function App() {
   }, [Mainusername]);
 
   async function fetchUserDataFromCosmosDB(Mainusername) {
-    console.log("MainUsername", Mainusername);
+    // console.log("MainUsername", Mainusername);
     const temp = await App_Access(Mainusername);
-    console.log("Allowed apps:", temp);
+    // console.log("Allowed apps:", temp);
     return {
       allowedApps: temp
     };

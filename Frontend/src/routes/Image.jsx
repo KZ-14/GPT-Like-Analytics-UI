@@ -113,12 +113,12 @@ function Image() {
     const handleProductPlacementChange = (selectedOption) => {
         // const selectedValue = event.target;
         setSelectedProductPlacement(selectedOption);
-        console.log('Selected Product Placement:', selectedOption);
+        // console.log('Selected Product Placement:', selectedOption);
         updateImage(selectedBrand, selectedOption);
     };
 
     useEffect(() => {
-        console.log(includeFilters);
+        // console.log(includeFilters);
     }, [includeFilters]);
 
 
@@ -273,7 +273,7 @@ function Image() {
 
     const handleSubmit = () => {
         // Implement what should happen when the submit button is clicked.
-        console.log("Dropdown values submitted.");
+        // console.log("Dropdown values submitted.");
     };
 
     const updateMessages = (
