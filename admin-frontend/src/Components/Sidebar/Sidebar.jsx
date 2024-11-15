@@ -36,11 +36,11 @@ function Sidebar() {
                     <p className="spann">lists</p>
                     <Link to="/users" style={{ textDecoration: 'none' }}>
                         <li>
-                            <PersonIcon className="icon" /> Access Contorl
+                            <PersonIcon className="icon" /> Access Control
                         </li>
                     </Link>
 
-                    <Link to="/products" style={{ textDecoration: 'none' }}>
+                    {/* <Link to="/products" style={{ textDecoration: 'none' }}>
                         <li>
                             <TableChartIcon className="icon" /> User Details
                         </li>
@@ -49,7 +49,7 @@ function Sidebar() {
                         <li>
                             <CreditCardIcon className="icon" /> ..
                         </li>
-                    </Link>
+                    </Link> */}
                     {/* <li>
                         <CreditCardIcon className="icon" /> Balance
                     </li>

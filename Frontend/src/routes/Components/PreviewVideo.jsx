@@ -26,11 +26,12 @@ const PreviewVideo = () => {
         backgroundColor: '#e1dfdd',
         color: '#333',
         textAlign: 'center',
-        borderBottom: '1px solid #ccc'
+        borderBottom: '1px solid #ccc',
+        marginTop : '40%'
       }}>
-        <h1>403 Forbidden!</h1>
+        <h1>You do not have access to this application. Please contact the administrator</h1>
       </header>
-      <div style={{
+      {/* <div style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -91,7 +92,7 @@ const PreviewVideo = () => {
             Your browser does not support the video tag.
           </video>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
