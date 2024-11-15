@@ -639,7 +639,7 @@ async def give_input(user_input, session_id, not_first_message = False):
         sql_query)
         if len(sql_query)>0:
             sql_query = sql_query[0]
-            print(sql_query)
+            sql_query = sql_query.upper().replace('LIMIT 10',"")
             data = get_df_from_query(query=sql_query)
             # check_query_result = check_filters(sql_query)
             
