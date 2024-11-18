@@ -20,7 +20,14 @@ import Loading from './Components/Loading';
 import ReactGA from 'react-ga4'; // Import Google Analytics
  
 const msalInstance = new PublicClientApplication(msalConfig);
-ReactGA.initialize('G-3Y1CQRB9Z7');
+// ReactGA.initialize('G-3Y1CQRB9Z7');
+
+if (process.env.REACT_APP_ENV === 'production') {
+  ReactGA.initialize('G-3Y1CQRB9Z7');
+} else {
+  ReactGA.initialize("dev");
+  console.log('ReactGA not initialized - Not in production environment');
+}
 
 function App() {
   const [Mainusername, setMainUsername] = useState(() => localStorage.getItem("username") || "");

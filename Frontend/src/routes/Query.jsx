@@ -274,13 +274,13 @@ Feel free to ask me any queries related to this data!`,
 
 1 )  What is the total net value of sales by each material group code?
 2 )  Which distributors have offered the highest primary discounts on their sales?
-3 )  Show the net value of sales and total discount for each state.
+3 )  Show the net value of sales and total discount for each state last month.
 4 )  Find the total sales volume and quantity for a cluster name "Cluster 2 North".
-5 )  What are the top 10 products by gross value?
-6 )  List the net value of sales and total discounts for customer name 'AAKASH ENTERPRISE'.
+5 )  What are the top 10 material_group_code by gross value in year 2024?
+6 )  List the yearly net value of sales and total discounts for customer name 'AAKASH ENTERPRISE'.
 7 )  Show the monthly average gross value for each channel.
 8 )  Provide the net value of sales by date, limited to the last 10 days.
-9 )  Display the secondary discount and net value for sales in a specific ASM area name.
+9 )  Display the monthly secondary discount and net value for sales in ASM area name 'Mumbai 2'.
 10 )  Calculate the primary discount as a percentage of net value for each portfolio name.
 
 ### To ensure I can provide you with the most accurate and relevant results, please keep the following instructions in mind while asking questions:

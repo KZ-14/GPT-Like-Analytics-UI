@@ -75,6 +75,10 @@ function Document() {
         }
     }, [style]);
 
+    useEffect(() => {
+
+    }, [style]);
+
     const [isLeaving, setIsLeaving] = useState(false);
 
     const handleSuperAppNavigation = (isLeaving) => {
@@ -88,7 +92,7 @@ function Document() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [chatType, setChatType] = useState("Document");
     const [isUploading, setIsUploading] = useState(false);
-    // const [isDocumentUploaded, setIsDocumentUploaded] = useState([{ id: activedocSessionId, uploaded: false, retriever: false }]);
+    // const [isDocumentUploaded, setIsDocumentUploaded] = useState();
 
 
     useEffect(() => {
@@ -180,6 +184,14 @@ function Document() {
 
     // Revisit this once
 
+    const isDocumentUploadedForActiveSession = () => {
+        if (!activedocSessionId) return false;
+        const activeSession = docchatSessions.find(
+            session => session.id === activedocSessionId
+        );
+        return activeSession?.uploaded || false;
+    };
+    
     const uploadFileToAzure = async (file) => {
         setIsUploading(true);
         const formData = new FormData();
@@ -313,51 +325,6 @@ function Document() {
     };
 
 
-    // const handleSend = async () => {
-    //     const text = input;
-    //     setInput("");
-
-    //     // if (chatType === "Document" && !isDocumentUploaded) {
-    //     //   alert("Please upload the document first.");
-    //     //   return;
-    //     // }
-    //     updateMessages(text, false);
-
-    //     try {
-    //         if (chatType === "Document") {
-    //             let combinedResponse = "";
-    //             let isFirstChunk = true;
-    //             await RAG_BOT(text, activeSessionId, (chunk) => {
-    //                 combinedResponse += chunk;
-    //                 if (isFirstChunk) {
-    //                     updateMessages(combinedResponse, true, true);
-    //                     isFirstChunk = false;
-    //                 } else {
-    //                     updateLastBotMessage(combinedResponse);
-    //                 }
-    //             });
-    //         } else {
-    //             let combinedResponse = "";
-    //             let isFirstChunk = true;
-
-    //             await BOT(text, activeSessionId, (chunk) => {
-    //                 combinedResponse += chunk;
-
-    //                 if (isFirstChunk) {
-    //                     updateMessages(combinedResponse, true, true);
-    //                     isFirstChunk = false;
-    //                 } else {
-    //                     updateLastBotMessage(combinedResponse);
-    //                 }
-    //             });
-    //         }
-    //     } catch (error) {
-    //         console.error("Error handling chat:", error);
-    //     } finally {
-    //         setSelectedFile(null);
-    //     }
-    // };
-
     const handledocSend = async () => {
         const text = input;
         setInput("");
@@ -407,13 +374,6 @@ function Document() {
         }
     };
 
-    // const handleEnter = async (e) => {
-    //     if (e.key === "Enter" && !e.shiftKey) {
-    //         e.preventDefault();
-    //         await handleSend();
-    //     }
-    // };
-
     const handledocEnter = async (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -430,20 +390,6 @@ function Document() {
         setInput(e.target.value);
       };
 
-    // const handleShiftEnter = async (e) => {
-    //   if (e.key === "Enter" && e.shiftKey) {
-    //     e.preventDefault();
-    //     const start = this.selectionStart;
-    //     const end = this.selectionEnd;
-
-    //     // Insert a newline at the cursor position
-    //     this.value =
-    //       this.value.substring(0, start) + "\n" + this.value.substring(end);
-
-    //     // Move the cursor to the new position
-    //     this.selectionStart = this.selectionEnd = start + 1;
-    //   }
-    // };
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -474,30 +420,6 @@ function Document() {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    // const handleChatTypeChange = (type) => {
-    //     // let newSessionId
-    //     // if (type == "Chat")
-    //     //   {newSessionId = `kushal_${uuidv4()}`}
-    //     // else {
-    //     //    newSessionId = `doc_kushal_${uuidv4()}`
-    //     // };
-    //     setChatType(type); // Update the selected chat type
-    //     // // setSessionId(newSessionId); 
-    //     // const newDocument = {
-    //     //   id: newSessionId,
-    //     //   uploaded : false,
-    //     //   retriever: false
-    //     // };
-    //     // setIsDocumentUploaded((prevDocuments) => [...prevDocuments, newDocument]); //    // addNewSession(newSessionId, `New ${type} Session`);
-    // };
-
-    // const handleNewChat = () => {
-    //     new_chat_normal();
-    //     const newSessionId = `${username.trim()}_${uuidv4()}`;
-    //     // setSessionId(newSessionId);
-    //     addNewSession(newSessionId, "Untitled");
-    // };
-
     const handleNewdocChat = () => {
         new_chat_document(activedocSessionId);
         const newSessionId = `doc_${username.trim()}_${uuidv4()}`;
@@ -511,19 +433,7 @@ function Document() {
         addNewdocSession(newSessionId, "Untitled");
     };
 
-    // const Message = ({ message }) => {
-    //     return (
-    //         <div className="txt">
-    //             <ReactMarkdown
-    //                 className="markdown"
-    //                 // rehypePlugins={[rehypeRaw]}
-    //                 remarkPlugins={[remarkBreaks, remarkGfm, rehypeHighlight]}
-    //             >
-    //                 {message.text}
-    //             </ReactMarkdown>
-    //         </div>
-    //     );
-    // };
+
 
     const UserMessage = ({ message }) => {
         return (
@@ -566,158 +476,6 @@ function Document() {
             </div>
         );
     };
-
-    // const Message = ({ message }) => {
-    //     const codeRef = useRef(null);
-
-    //     // Ensure content is a string
-    //     const getContentAsString = (input) => {
-    //         return typeof input === 'string' ? input : String(input);
-    //     };
-
-    //     // Function to split content into text and code segments
-    //     const splitContent = (content) => {
-    //         const regex = /(```[\s\S]*?```)/g; // Regex to match code blocks
-    //         const parts = [];
-    //         let lastIndex = 0;
-
-    //         // Convert content to string
-    //         content = getContentAsString(content);
-
-    //         content.replace(regex, (match, codeBlock, offset) => {
-    //             // Add non-code text segment
-    //             if (offset > lastIndex) {
-    //                 parts.push({ type: 'text', content: content.slice(lastIndex, offset) });
-    //             }
-    //             // Add code block segment
-    //             parts.push({ type: 'code', content: match });
-    //             lastIndex = offset + match.length;
-    //             return match;
-    //         });
-
-    //         // Add remaining text segment
-    //         if (lastIndex < content.length) {
-    //             parts.push({ type: 'text', content: content.slice(lastIndex) });
-    //         }
-
-    //         return parts;
-    //     };
-
-    //     // Function to copy code to clipboard
-    //     const copyCodeToClipboard = (code, event) => {
-    //         if (navigator.clipboard) {
-    //             navigator.clipboard.writeText(code)
-    //                 .then(() => {
-    //                     event.target.classList.add('copied');
-    //                     setTimeout(() => {
-    //                         event.target.classList.remove('copied');
-    //                     }, 1000);
-    //                 })
-    //                 .catch(err => {
-    //                     // alert("Failed to copy text: ", err);
-    //                 });
-    //         } else {
-    //             // Fallback to textarea method
-    //             const textArea = document.createElement("textarea");
-    //             textArea.value = code;
-    //             document.body.appendChild(textArea);
-    //             textArea.focus();
-    //             textArea.select();
-
-    //             try {
-    //                 const successful = document.execCommand('copy');
-    //                 if (successful) {
-    //                     // Add a CSS class to change the color
-    //                     event.target.classList.add('copied');
-    //                     // Remove the color change after 1 second
-    //                     setTimeout(() => {
-    //                         event.target.classList.remove('copied');
-    //                     }, 1000);
-    //                 } else {
-    //                     alert('Failed to copy code');
-    //                 }
-    //             } catch (err) {
-    //                 alert('Fallback: Could not copy code');
-    //             } finally {
-    //                 document.body.removeChild(textArea);
-    //             }
-    //         }
-    //     };
-
-    //     // Render content with text and code blocks
-    //     const renderContent = () => {
-    //         const content = getContentAsString(message);
-    //         const segments = splitContent(content);
-
-    //         return segments.map((segment, index) => {
-    //             if (segment.type === 'text') {
-    //                 return (
-    //                     <ReactMarkdown
-    //                         key={index}
-    //                         children={segment.content}
-    //                         remarkPlugins={[remarkGfm, remarkBreaks]}
-    //                         components={{
-    //                             pre: ({ children }) => (
-    //                                 <pre
-    //                                     style={{
-    //                                         wordWrap: "break-word", // Break long words inside <pre>
-    //                                         whiteSpace: "pre-wrap", // Maintain the white space and wrap lines
-    //                                         overflowWrap: "anywhere", // Break long words anywhere if needed
-    //                                     }}
-    //                                 >
-    //                                     {children}
-    //                                 </pre>
-    //                             ),
-    //                             p: ({ children }) => <p style={{ marginBottom: '' }}>{children}</p>,
-    //                             li: ({ children }) => <li style={{ marginBottom: '0.5em', marginTop: "0.5em" }}>{children}</li>,
-    //                             strong: ({ children }) => (<strong style={{ marginTop: '1em', marginBottom: '1em' }}>{children}</strong>),
-    //                             h3: ({ children }) => <h3 style={{ marginBottom: '1em', marginTop: '1em' }}>{children}</h3>,
-    //                         }}
-    //                     />
-    //                 );
-    //             }
-    //             if (segment.type === 'code') {
-    //                 const codeContent = segment.content.replace(/^```.*\n/, '').replace(/\n```$/, '');
-    //                 return (
-    //                     <div key={index} className="code-container">
-    //                         <pre className="pre_code">
-    //                             <code>
-    //                                 {codeContent}
-    //                             </code>
-    //                         </pre>
-    //                         <span
-    //                             className="copy-emoji"
-    //                             onClick={(event) => copyCodeToClipboard(codeContent, event)}
-    //                             role="button"
-    //                             aria-label="Copy code"
-    //                             title="Copy code"
-    //                         >
-    //                             &#128221;
-    //                         </span>
-    //                     </div>
-    //                 );
-    //             }
-    //             return null;
-    //         });
-    //     };
-
-    //     return renderContent();
-    // };
-
-    // const addNewSession = (sessionId, title) => {
-    //     const newSession = {
-    //         id: sessionId,
-    //         title: title,
-    //         messages: [
-    //             {
-    //                 text: `Hi ${username}, I am MaricoGPT, a state-of-the-art language model. Please upload a file from the chat bar and ask me to summarise, extract information or anything else you can think of`,
-    //                 isBot: true,
-    //             },
-    //         ],
-    //     };
-    //     setChatSessions((prevSessions) => [...prevSessions, newSession]);
-    //     setActiveSessionId(sessionId);
-    // };
 
     const addNewdocSession = (sessionId, title) => {
         const newSession = {
@@ -1090,7 +848,7 @@ function Document() {
                                     />
                                     {/* <span className='txt' dangerouslySetInnerHTML={{ __html: message.text }}></span> */}
                                     {message.isBot ? (
-                                        <span className="txt">
+                                        <span className="txt" style={{ paddingTop: 6.5 }}>
                                             <Message message={message.text} />
                                         </span>
                                     ) : (
@@ -1111,7 +869,7 @@ function Document() {
                         </div>
                         <div className="chatFooter">
                             <div className="inp">
-                                {chatType === "Document" && (
+                                {chatType === "Document" && !isDocumentUploadedForActiveSession() && (
                                     <>
                                         <button className="attachBtn" onClick={handleAttachClick}>
                                             <FontAwesomeIcon icon={faPaperclip} />
