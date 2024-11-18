@@ -194,6 +194,23 @@
     /* zoom: 80%; */
   }
   
+  /* .App::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+    width: 800px; 
+    height: 800px; 
+    background-image: url('/Marico-Logo.white.png'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.02; 
+    pointer-events: none; 
+    z-index: -99;
+} */
+
   .App {
     min-height: 100vh;
     display: flex;

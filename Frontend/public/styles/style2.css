@@ -193,17 +193,32 @@
     /* /* background: #f3f6f7; */
     /* background: #f3f7f7; */
     background: #f6f7f3;
-
-
     color: #000;
     font-family: "Poppins", sans-serif;
     overflow: hidden;
     /* zoom: 80%; */
     /* transform: scale(0.8); */
   }
+
+  /* .App::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+    width: 800px; 
+    height: 800px; 
+    background-image: url('/Marico-Logo.wine.png'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.04; 
+    pointer-events: none; 
+    z-index: -99;
+} */
   
   .App {
-    min-height: 100vh;
+    min-height: 100vh; 
     display: flex;
     position: relative;
   }

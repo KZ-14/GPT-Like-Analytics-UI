@@ -643,6 +643,7 @@ async def give_input(user_input, session_id, not_first_message = False):
         if len(sql_query)>0:
             sql_query = sql_query[0]
             sql_query = sql_query.upper().replace("LIMIT 10", "")
+            print("AFTER LIMIT REMOVED SQL QUERY",sql_query)
             data = get_df_from_query(query=sql_query)
             # check_query_result = check_filters(sql_query)
             
@@ -666,12 +667,12 @@ async def give_input(user_input, session_id, not_first_message = False):
             data_dict = df_to_dict(data)
             return { 'text': answer_summary, 'data':data_dict }
         else:
-            return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':None }
+            return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':[] }
     except GraphRecursionError:
-        return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':None }
+        return { 'text': 'I am unable to answer this question. Please read the user manual at the top of this page with examples of questions I can answer.', 'data':[] }
     except Exception as e:
         print(e)
-        return { 'text': 'Something went wrong! Please refresh the session and try again.', 'data':None }
+        return { 'text': 'Something went wrong! Please refresh the session and try again.', 'data':[] }
     
 if __name__ == "__main__":
     import uuid
