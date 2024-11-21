@@ -395,7 +395,7 @@ function Image() {
                         <span role="img" aria-label="chat">
                             <FontAwesomeIcon icon={faImage} />
                         </span>
-                        IMAGE AI
+                        Image-AI
                     </div>
                     <div className="Controls-right">
 
