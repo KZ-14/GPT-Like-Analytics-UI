@@ -27,9 +27,8 @@ import replicate
 import os
 from redis.exceptions import LockError
 import pickle
-# from Logging import Create_Logger
+from Logging import Create_Logger
 from QueryAI import give_input
-# from QueryAI_2 import give_input
 
 
 redis_host = 'maricogpt.redis.cache.windows.net'
@@ -41,11 +40,11 @@ redis_client = redis.StrictRedis(host=redis_host, port=redis_port,password= redi
 os.environ["REPLICATE_API_TOKEN"] = "r8_dC0R3IByOpd1ifynNX5CHxKO6GGNfRE3GifgN"
 
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
-logging.basicConfig(filename='myapp.log',encoding='utf-8', level=logging.INFO)
+# logging.basicConfig(filename='myapp.log',encoding='utf-8', level=logging.INFO)
 
-# logger = Create_Logger()
+logger = Create_Logger()
     
 app = FastAPI(root_path="/backend")
 
@@ -155,15 +154,15 @@ async def AppAcess(input_model: AppAccessModel):
     try:
         username = input_model.username
         item = access_container.read_item(item=username, partition_key=username)
-        # logger.info(
-        #     "App Accesse API called",
-        #     extra={"tags": {"service": "App-Access"}, "user_emailID": "f{input_model.username}"}
-        # )
         logger.info(
-            f'''App Access API called
-            service: App-Access
-            user_emailID: {input_model.username}'''
+            "App Accesse API called",
+            extra={"tags": {"service": "App-Access"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.info(
+        #     f'''App Access API called
+        #     service: App-Access
+        #     user_emailID: {input_model.username}'''
+        # )
         return item["app_access"]
     except CosmosResourceNotFoundError:
         access_container.upsert_item(
@@ -176,26 +175,26 @@ async def AppAcess(input_model: AppAccessModel):
             }
         )
         item = access_container.read_item(item=username, partition_key=username)
-        # logger.info(
-        #     "App Access API called (User logged in for the first time)",
-        #     extra={"tags": {"service": "App-Access"}, "user_emailID": "f{input_model.username}"}
-        # )
         logger.info(
-            f'''App Access API called (User logged in for the first time)
-            service: App-Access
-            user_emailID: {input_model.username}'''
+            "App Access API called (User logged in for the first time)",
+            extra={"tags": {"service": "App-Access"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.info(
+        #     f'''App Access API called (User logged in for the first time)
+        #     service: App-Access
+        #     user_emailID: {input_model.username}'''
+        # )
         return item["app_access"]
     except Exception as e:
-        # logger.error(
-        #     "Error in app access API",
-        #     extra={"tags": {"service": "App-Access"}, "user_emailID": "f{input_model.username}"}
-        # )
-        logger.info(
-            f'''Error in app access API
-            service: App-Access
-            user_emailID: {input_model.username}'''
+        logger.error(
+            "Error in app access API",
+            extra={"tags": {"service": "App-Access"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.info(
+        #     f'''Error in app access API
+        #     service: App-Access
+        #     user_emailID: {input_model.username}'''
+        # )
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/title")
@@ -217,29 +216,29 @@ async def bot(input_model: InputModel):
         stream = ChatBot(input_text, session_id, title)
         # print("Step1:",stream)
         username = input_model.session_id.split("_")[0]
-        # logger.info(
-        #     "Chat-AI Send API Called Successfully",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.info(
-            f'''Chat-AI Send API Called Successfully
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Chat-AI Send API Called Successfully",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.info(
+        #     f'''Chat-AI Send API Called Successfully
+        #     service: Chat-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         return StreamingResponse(stream, media_type="text/plain",  headers={"X-Accel-Buffering": "no"})
     except Exception as e:
         username = input_model.session_id.split("_")[0]
-        # logger.error(
-        #     "Chat-AI Send API Failed",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.error(
-            f'''Chat-AI Send API Failed
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Chat-AI Send API Failed",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.error(
+        #     f'''Chat-AI Send API Failed
+        #     service: Chat-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/upload-to-azure/")
@@ -252,28 +251,28 @@ async def upload_document(user_id: str = Form(...), file: UploadFile = File(...)
         blob_client = container_client.get_blob_client(blob_name)
         print(type(file))    
         username = user_id.split("_")[1]
-        # logger.info(
-        #     "File Recieved from the User",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
-        # )
         logger.info(
-            f'''File Recieved from the User
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {document_id}'''
+            "File Recieved from the User",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
         )
+        # logger.info(
+        #     f'''File Recieved from the User
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {document_id}'''
+        # )
         file_content = await file.read()  # Read the file content as bytes
         blob_client.upload_blob(file_content, blob_type="BlockBlob", overwrite=True)
-        # logger.info(
-        #     "File Uploaded to Blob Storage",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
-        # ) 
         logger.info(
-            f'''File Uploaded to Blob Storage
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {document_id}'''
-        )     
+            "File Uploaded to Blob Storage",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
+        ) 
+        # logger.info(
+        #     f'''File Uploaded to Blob Storage
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {document_id}'''
+        # )     
         sas_expiry = datetime.now() + timedelta(minutes=15)
 
         # Generate the SAS token
@@ -291,29 +290,29 @@ async def upload_document(user_id: str = Form(...), file: UploadFile = File(...)
 
         print("Step 1")
         await CreateRetriever(document_id= document_id,connect_str=connect_str,container_name=container_name,blob_name=blob_name)
-        # logger.info(
-        #     "Retriever Created",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
-        # )    
-        print("Retriever Created")
         logger.info(
-            f'''Retriever Created
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {document_id}'''
-        )     
+            "Retriever Created",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
+        )    
+        print("Retriever Created")
+        # logger.info(
+        #     f'''Retriever Created
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {document_id}'''
+        # )     
         await CallRetriever(document_id)
         print("Retriever Called")
-        # logger.info(
-        #     "Retriever Called",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
-        # )  
         logger.info(
-            f'''Retriever Called
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {document_id}'''
-        )       
+            "Retriever Called",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
+        )  
+        # logger.info(
+        #     f'''Retriever Called
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {document_id}'''
+        # )       
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -328,16 +327,16 @@ async def call_retriever(input_model:RetriverCreationModel):
     username = document_id.split("_")[1]
     if ret is None:  
         await CallRetriever(document_id = document_id)
-        # logger.info(
-        #     "Retriever Called",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
-        # )  
         logger.info(
-            f'''Retriever Called
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {document_id}'''
-        ) 
+            "Retriever Called",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{document_id}"}
+        )  
+        # logger.info(
+        #     f'''Retriever Called
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {document_id}'''
+        # ) 
     print("Retriever Created Sucessfully")
     return JSONResponse(content={"document_id": document_id, "blob_name": blob_name}, status_code=201)
 
@@ -346,30 +345,30 @@ async def call_retriever(input_model:RetriverCreationModel):
 async def new_chat(input_model : ChatHistoryModel):
     try:
         username = input_model.session_id.split("_")[0]
-        # logger.info(
-        #     "New Chat API Called",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )    
         logger.info(
-            f'''New Chat API Called
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
-        )     
+            "New Chat API Called",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
+        )    
+        # logger.info(
+        #     f'''New Chat API Called
+        #     service: Chat-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )     
         upload_store_to_cosmosdb(input_model.session_id)
         # upload_token_store_to_cosmosdb()
         # logger.info(f"Chat model : Chat history saved to CosmosDB sucessfully")
         # upload_store_to_cosmosdb()
-        # logger.info(
-        #     "Chat history uploaded to CosmosDB",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )  
         logger.info(
-            f'''Chat history uploaded to CosmosDB
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
-        ) 
+            "Chat history uploaded to CosmosDB",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
+        )  
+        # logger.info(
+        #     f'''Chat history uploaded to CosmosDB
+        #     service: Chat-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # ) 
         return JSONResponse(content={"message": "Chat data uploaded to CosmosDB."}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -378,29 +377,29 @@ async def new_chat(input_model : ChatHistoryModel):
 async def new_chat_document(input_model : ChatHistoryModel):
     try:
         username = input_model.session_id.split("_")[1]
-        # logger.info(
-        #     "New Chat API Called",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )   
         logger.info(
-            f'''Chat history uploaded to CosmosDB
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
-        ) 
+            "New Chat API Called",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
+        )   
+        # logger.info(
+        #     f'''Chat history uploaded to CosmosDB
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # ) 
         upload_store_to_cosmosdb_rag(input_model.session_id)
         redis_client.delete(f"retriever:{input_model.session_id}")
         # logger.info(f"Document model : Chat history saved to CosmosDB sucessfully")
-        # logger.info(
-        #     "Chat history uploaded to CosmosDB",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )  
         logger.info(
-            f'''Chat history uploaded to CosmosDB
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
-        ) 
+            "Chat history uploaded to CosmosDB",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
+        )  
+        # logger.info(
+        #     f'''Chat history uploaded to CosmosDB
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # ) 
         return JSONResponse(content={"message": "Chat data uploaded to CosmosDB."}, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -452,29 +451,29 @@ async def RAG_bot(input_model: DocumentModel):
         stream = Chatbot_RAG(input_text, session_id,title,Retriever)
         # print("Step1:",stream)
         username = input_model.session_id.split("_")[1]
-        # logger.info(
-        #     "Doc-AI Send API Called Successfully",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.info(
-            f'''Doc-AI Send API Called Successfully
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Doc-AI Send API Called Successfully",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.info(
+        #     f'''Doc-AI Send API Called Successfully
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         return StreamingResponse(stream, media_type="text/plain",  headers={"X-Accel-Buffering": "no"})
     except Exception as e:
         username = input_model.session_id.split("_")[1]
-        # logger.error(
-        #     "Doc-AI Send API Failed",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.error(
-            f'''Doc-AI Send API Failed
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Doc-AI Send API Failed",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.error(
+        #     f'''Doc-AI Send API Failed
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         raise HTTPException(status_code=500, detail=str(e))
     
     
@@ -500,30 +499,30 @@ def get_all_chat_histories(input_model: UsernameModel):
             }
             for item in items  
         ]
-        # logger.info(
-        #     "Chat history Loaded",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{input_model.username}"}
-        # )
         logger.info(
-            f'''Chat history Loaded
-            service: Chat-AI
-            user_emailID: {input_model.username}
-            '''
+            "Chat history Loaded",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.info(
+        #     f'''Chat history Loaded
+        #     service: Chat-AI
+        #     user_emailID: {input_model.username}
+        #     '''
+        # )
         return formatted_data
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        # logger.error(
-        #     "Chat history Loading Failed",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{input_model.username}"}
-        # )
         logger.error(
-            f'''Chat history Loading Failed
-            service: Chat-AI
-            user_emailID: {input_model.username}
-            '''
+            "Chat history Loading Failed",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.error(
+        #     f'''Chat history Loading Failed
+        #     service: Chat-AI
+        #     user_emailID: {input_model.username}
+        #     '''
+        # )
         return None
 
 @app.post("/all_doc_chat_load/")
@@ -549,29 +548,29 @@ def get_all_chat_histories(input_model: UsernameModel):
             }
             for item in items  
         ]
-        # logger.info(
-        #     "Chat history Loaded",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{input_model.username}"}
-        # )
         logger.info(
-            f'''Chat history Loaded
-            service: Doc-AI
-            user_emailID: {input_model.username}
-            '''
+            "Chat history Loaded",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.info(
+        #     f'''Chat history Loaded
+        #     service: Doc-AI
+        #     user_emailID: {input_model.username}
+        #     '''
+        # )
         return formatted_data
 
     except Exception as e:
-        # logger.error(
-        #     "Chat history Loading Failed",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{input_model.username}"}
-        # )
         logger.error(
-            f'''Chat history Loading Failed
-            service: Doc-AI
-            user_emailID: {input_model.username}
-            '''
+            "Chat history Loading Failed",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{input_model.username}"}
         )
+        # logger.error(
+        #     f'''Chat history Loading Failed
+        #     service: Doc-AI
+        #     user_emailID: {input_model.username}
+        #     '''
+        # )
         return None
     
 @app.post("/ChatHistoryLoad_Backend/")
@@ -581,29 +580,29 @@ def Load_chatHistory_Backend(input_model : ChatHistoryModel):
         # logger.info(f"Chat model : Chat history saved to CosmosDB sucessfully")
         # upload_store_to_cosmosdb()
         username = input_model.session_id.split("_")[0]
-        # logger.info(
-        #     "Chat Session Loaded",
-        #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.info(
-            f'''Chat Session Loaded
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Chat Session Loaded",
+            extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.info(
+        #     f'''Chat Session Loaded
+        #     service: Chat-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         return JSONResponse(content={"message": "Chat data loaded from CosmosDB."}, status_code=200)
     except Exception as e:
         username = input_model.session_id.split("_")[0]
-        # logger.error(
-        #     "Chat session Loading Failed",
-        #     extra={"tags": {"service": "Chat-AI"},"user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.error(
-            f'''Chat session Loading Failed
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Chat session Loading Failed",
+            extra={"tags": {"service": "Chat-AI"},"user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.error(
+        #     f'''Chat session Loading Failed
+        #     service: Chat-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/docChatHistoryLoad_Backend/")
@@ -611,29 +610,29 @@ def doc_Load_chatHistory_Backend(input_model : ChatHistoryModel):
     try:
         load_store_from_cosmosdb_rag(input_model.session_id)
         username = input_model.session_id.split("_")[0]
-        # logger.info(
-        #     "Chat Session Loaded",
-        #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.info(
-            f'''Chat Session Loaded
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Chat Session Loaded",
+            extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.info(
+        #     f'''Chat Session Loaded
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         return JSONResponse(content={"message": "Chat data loaded from CosmosDB."}, status_code=200)
     except Exception as e:
         username = input_model.session_id.split("_")[1]
-        # logger.error(
-        #     "Chat session Loading Failed",
-        #     extra={"tags": {"service": "Doc-AI"},"user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-        # )
         logger.error(
-            f'''Chat session Loading Failed
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+            "Chat session Loading Failed",
+            extra={"tags": {"service": "Doc-AI"},"user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
         )
+        # logger.error(
+        #     f'''Chat session Loading Failed
+        #     service: Doc-AI
+        #     user_emailID: {username}
+        #     user_sessionID: {input_model.session_id}'''
+        # )
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/delete_normal_chat/")
@@ -648,53 +647,53 @@ def delete_chat(input_model: DeleteChatModel):
         service_check = input_model.session_id.split("_")[0]
         if service_check == "doc":
             username = input_model.session_id.split("_")[1]
-            # logger.info(
-            #     "Chat Session Deleted",
-            #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-            # )
             logger.info(
-            f'''Chat Session Deleted
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+                "Chat Session Deleted",
+                extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
             )
+            # logger.info(
+            # f'''Chat Session Deleted
+            # service: Doc-AI
+            # user_emailID: {username}
+            # user_sessionID: {input_model.session_id}'''
+            # )
         else:
             username = input_model.session_id.split("_")[0]
-            # logger.info(
-            #     "Chat Session Deleted",
-            #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-            # )
             logger.info(
-            f'''Chat Session Deleted
-            service: Chat-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+                "Chat Session Deleted",
+                extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
             )
+            # logger.info(
+            # f'''Chat Session Deleted
+            # service: Chat-AI
+            # user_emailID: {username}
+            # user_sessionID: {input_model.session_id}'''
+            # )
     except Exception as e:
         if service_check == "doc":
             username = input_model.session_id.split("_")[1]
-            # logger.error(
-            #     "Chat Session deletion failed",
-            #     extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-            # )
             logger.error(
-            f'''Chat Session deletion failed
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+                "Chat Session deletion failed",
+                extra={"tags": {"service": "Doc-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
             )
+            # logger.error(
+            # f'''Chat Session deletion failed
+            # service: Doc-AI
+            # user_emailID: {username}
+            # user_sessionID: {input_model.session_id}'''
+            # )
         else:
             username = input_model.session_id.split("_")[0]
-            # logger.error(
-            #     "Chat Session deletion failed",
-            #     extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
-            # )
             logger.error(
-            f'''Chat Session deletion failed
-            service: Doc-AI
-            user_emailID: {username}
-            user_sessionID: {input_model.session_id}'''
+                "Chat Session deletion failed",
+                extra={"tags": {"service": "Chat-AI"}, "user_emailID": "f{username}","user_sessionID":f"{input_model.session_id}"}
             )
+            # logger.error(
+            # f'''Chat Session deletion failed
+            # service: Doc-AI
+            # user_emailID: {username}
+            # user_sessionID: {input_model.session_id}'''
+            # )
         return None
     
 @app.post("/update_title/")

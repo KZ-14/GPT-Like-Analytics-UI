@@ -8,6 +8,7 @@ import {
     faPaperclip,
     faChevronLeft,
     faChevronRight,
+    faCheck,
     faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import sendBtn from "../assets/send.svg";
@@ -92,6 +93,7 @@ function Document() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [chatType, setChatType] = useState("Document");
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadedFileName, setUploadedFileName] = useState("TEMP");
     // const [isDocumentUploaded, setIsDocumentUploaded] = useState();
 
 
@@ -788,6 +790,15 @@ function Document() {
                             </div>{" "}
                         </>
                     )}
+                                        {/* {isDocumentUploadedForActiveSession() && uploadedFileName && (
+                    <div className="file-status-bar">
+                        <div className="file-info">
+                            <FontAwesomeIcon icon={faPaperclip} className="file-icon" />
+                            <span className="file-name">{uploadedFileName}</span>
+                            <FontAwesomeIcon icon={faCheck} className="check-icon" />
+                        </div>
+                    </div>
+                )} */}
                 </div>
             </div>
             <div className="main">
