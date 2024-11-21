@@ -489,7 +489,7 @@ function Chat() {
             {/* <span className= "" role="img" aria-label="chat">
               💬
             </span> */}
-              Chat AI
+              Chat-AI
           </div>
           <div className="Controls-right">
           {style === "style1" ? (

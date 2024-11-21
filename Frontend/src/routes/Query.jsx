@@ -661,7 +661,7 @@ with the corresponding queries!
             {/* <span className= "" role="img" aria-label="chat">
               💬
             </span> */}
-            Query AI
+            Query-AI
           </div>
           <div className="Controls-right">
             {style === "style1" ? (

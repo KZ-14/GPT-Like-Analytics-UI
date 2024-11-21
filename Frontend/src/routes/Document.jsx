@@ -794,7 +794,7 @@ function Document() {
                 <div className="Controls">
                     <div className="appName">
                         <span role="img" aria-label="document">📄</span>
-                        DOC AI
+                        Doc-AI
                     </div>
                     <div className="Controls-right">
                         {style === "style1" ?
